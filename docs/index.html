@@ -81,8 +81,8 @@ h1, h2, h3 { font-family: 'Playfair Display', "Hiragino Mincho ProN", "Yu Mincho
 .cta.outline { background: transparent; color: var(--accent); }
 .cta.outline:hover { background: var(--accent); color: #fff; }
 
-.new-releases {
-  padding: 60px 0 40px;
+.series-overview {
+  padding: 60px 0 50px;
   background: var(--paper);
   border-bottom: 1px solid var(--line);
 }
@@ -101,7 +101,72 @@ h1, h2, h3 { font-family: 'Playfair Display', "Hiragino Mincho ProN", "Yu Mincho
   margin: 0 0 36px;
   letter-spacing: 0.02em;
 }
-.new-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+.series-overview-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+.series-overview-card {
+  background: #fff;
+  border: 1px solid var(--line);
+  padding: 24px;
+  text-decoration: none;
+  color: var(--ink);
+  display: flex;
+  flex-direction: column;
+  transition: box-shadow 0.25s, transform 0.25s, border-color 0.25s;
+}
+.series-overview-card:hover {
+  box-shadow: 0 10px 28px rgba(0,0,0,0.08);
+  transform: translateY(-3px);
+  border-color: var(--accent);
+}
+.series-thumbs {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 16px;
+  justify-content: center;
+}
+.series-thumbs img {
+  width: 32%;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+}
+.series-overview-num {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-size: 12px;
+  letter-spacing: 0.15em;
+  color: var(--accent);
+  margin-bottom: 6px;
+  text-align: center;
+}
+.series-overview-title {
+  font-family: 'Playfair Display', "Hiragino Mincho ProN", "Yu Mincho", serif;
+  font-size: 18px;
+  margin: 0 0 10px;
+  font-weight: 500;
+  text-align: center;
+  line-height: 1.4;
+}
+.series-overview-concept {
+  font-family: 'Raleway', sans-serif;
+  font-size: 13px;
+  color: var(--ink-soft);
+  line-height: 1.7;
+  margin: 0 0 14px;
+  flex: 1;
+}
+.series-overview-count {
+  font-family: 'Raleway', sans-serif;
+  font-size: 11px;
+  color: var(--ink-mute);
+  letter-spacing: 0.1em;
+  text-align: center;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
 
 .series-nav {
   padding: 32px 24px;
@@ -245,7 +310,7 @@ h1, h2, h3 { font-family: 'Playfair Display', "Hiragino Mincho ProN", "Yu Mincho
   .hero { padding: 60px 24px 40px; }
   .hero h1 { font-size: 36px; }
   .hero .sub-en { font-size: 16px; }
-  .new-grid, .books-grid, .books-grid.cols-2 { grid-template-columns: 1fr; max-width: 360px; margin-left: auto; margin-right: auto; }
+  .series-overview-grid, .books-grid, .books-grid.cols-2 { grid-template-columns: 1fr; max-width: 360px; margin-left: auto; margin-right: auto; }
   .series-section { padding: 50px 0 30px; }
   .section-title, .series-title { font-size: 22px; }
 }
@@ -273,44 +338,54 @@ h1, h2, h3 { font-family: 'Playfair Display', "Hiragino Mincho ProN", "Yu Mincho
 </section>
 
 
-<section class="new-releases">
+<section class="series-overview">
   <div class="wrap">
-    <div class="section-label">NEW RELEASES</div>
-    <h2 class="section-title">🆕 新刊</h2>
-    <div class="new-grid">
+    <div class="section-label">ALL SERIES</div>
+    <h2 class="section-title">シリーズ一覧</h2>
+    <div class="series-overview-grid">
       
-      <article class="book-card">
-        <div class="cover has-image"><img src="covers/16-bd9dddf0.jpg" alt="心の中の評議会: ミッドライフの暗闇に灯す16の対話"></div>
-        <div class="badges"><span class="badge new">新刊</span><span class="badge paperback">📖 紙版</span><span class="badge review">★5.0</span></div>
-        <h3 class="book-title">心の中の評議会</h3>
-        
-        <div class="book-meta">2026.05.01</div>
-        <div class="book-actions">
-          <a class="btn primary" href="https://www.amazon.co.jp/dp/B0GZJF83SV" target="_blank" rel="noopener">Kindleで読む</a>
-        </div>
-      </article>
-
-      <article class="book-card">
-        <div class="cover has-image"><img src="covers/aiclaude-2d253260.jpg" alt="AI時代の脳疲労マネジメント: 装置運用世代のClaude Code術"></div>
-        <div class="badges"><span class="badge new">新刊</span><span class="badge paperback">📖 紙版</span></div>
-        <h3 class="book-title">AI時代の脳疲労マネジメント</h3>
-        
-        <div class="book-meta">2026.05.01</div>
-        <div class="book-actions">
-          <a class="btn primary" href="https://www.amazon.co.jp/dp/B0GZCPDL6V" target="_blank" rel="noopener">Kindleで読む</a>
-        </div>
-      </article>
-
-      <article class="book-card">
-        <div class="cover has-image"><img src="covers/book-4559489d.jpg" alt="就職氷河期世代の生き延び方: 装置運用で生きる第３の道"></div>
-        <div class="badges"><span class="badge new">新刊</span><span class="badge paperback">📖 紙版</span></div>
-        <h3 class="book-title">就職氷河期世代の生き延び方</h3>
-        
-        <div class="book-meta">2026.05.01</div>
-        <div class="book-actions">
-          <a class="btn primary" href="https://www.amazon.co.jp/dp/B0GX5L2GC2" target="_blank" rel="noopener">Kindleで読む</a>
-        </div>
-      </article>
+      <a href="#s1" class="series-overview-card">
+        <div class="series-thumbs"><img src="covers/rnarna-67bf1b4b.jpg" alt=""><img src="covers/rnamrna-6c7377eb.jpg" alt=""><img src="covers/rna-b44a89d9.jpg" alt=""></div>
+        <div class="series-overview-num">SERIES 01</div>
+        <h3 class="series-overview-title">lncRNA・分子生物学シリーズ</h3>
+        <p class="series-overview-concept">タンパク質を作らないRNAが拓く新しい医療と生命像。研究現場からの最前線レポート。</p>
+        <div class="series-overview-count">全3冊</div>
+      </a>
+      <a href="#s2" class="series-overview-card">
+        <div class="series-thumbs"><img src="covers/16-bd9dddf0.jpg" alt=""><img src="covers/aiclaude-2d253260.jpg" alt=""><img src="covers/book-4559489d.jpg" alt=""></div>
+        <div class="series-overview-num">SERIES 02</div>
+        <h3 class="series-overview-title">装置運用世代シリーズ</h3>
+        <p class="series-overview-concept">「意志」ではなく「装置」で生きる——HSP研究者がAI時代に編み出した、中年期サバイバル術。</p>
+        <div class="series-overview-count">全3冊</div>
+      </a>
+      <a href="#s3" class="series-overview-card">
+        <div class="series-thumbs"><img src="covers/wetaidry-00c2fdb4.jpg" alt=""><img src="covers/ai-ad90cc09.jpg" alt=""><img src="covers/hspai-c63be800.jpg" alt=""></div>
+        <div class="series-overview-num">SERIES 03</div>
+        <h3 class="series-overview-title">AI × 研究シリーズ</h3>
+        <p class="series-overview-concept">生成AIを「考える相棒」として使うための、研究者発の実践ノウハウ。</p>
+        <div class="series-overview-count">全3冊</div>
+      </a>
+      <a href="#s4" class="series-overview-card">
+        <div class="series-thumbs"><img src="covers/book-0dd5ba81.jpg" alt=""><img src="covers/8-5acd5caa.jpg" alt=""></div>
+        <div class="series-overview-num">SERIES 04</div>
+        <h3 class="series-overview-title">科学史シリーズ</h3>
+        <p class="series-overview-concept">ノーベル賞の光と影。受賞者と「逃した天才たち」の両側から、科学の発展史を描く。</p>
+        <div class="series-overview-count">全2冊</div>
+      </a>
+      <a href="#s5" class="series-overview-card">
+        <div class="series-thumbs"><img src="covers/book-87f9b4f6.jpg" alt=""><img src="covers/7-12c00b0d.jpg" alt=""></div>
+        <div class="series-overview-num">SERIES 05</div>
+        <h3 class="series-overview-title">研究者キャリアシリーズ</h3>
+        <p class="series-overview-concept">アカデミアで生き残るための、地に足のついた実装ガイド。</p>
+        <div class="series-overview-count">全2冊</div>
+      </a>
+      <a href="#s6" class="series-overview-card">
+        <div class="series-thumbs"><img src="covers/book-da5a36fb.jpg" alt=""><img src="covers/book-727d9e56.jpg" alt=""></div>
+        <div class="series-overview-num">SERIES 06</div>
+        <h3 class="series-overview-title">健康・分子生物学シリーズ</h3>
+        <p class="series-overview-concept">薬学部教員が分子レベルで読み解く、日常の健康と美容。</p>
+        <div class="series-overview-count">全2冊</div>
+      </a>
     </div>
   </div>
 </section>
@@ -570,7 +645,7 @@ h1, h2, h3 { font-family: 'Playfair Display', "Hiragino Mincho ProN", "Yu Mincho
   </div>
 </section>
 
-<div class="footer-meta">Last updated: 2026-05-16 20:45</div>
+<div class="footer-meta">Last updated: 2026-05-16 20:55</div>
 
 </body>
 </html>

@@ -239,26 +239,47 @@ def render_series_section(series_id, books, config, section_num):
 </section>"""
 
 
-def render_new_releases(books):
-    """新刊3冊（最新の出版日順）"""
-    new_books = sorted(
-        [b for b in books if is_new(b.get("pub_date"))],
-        key=lambda b: str(b.get("pub_date", "")),
-        reverse=True,
-    )[:3]
-    if not new_books:
+def render_series_overview(series_groups):
+    """全シリーズ一覧（カード形式の目次）"""
+    cards = []
+    section_num = 1
+    for sid, books in series_groups:
+        if sid is None:
+            continue
+        config = SERIES_CONFIG.get(sid)
+        if not config:
+            continue
+
+        # シリーズの代表表紙3冊を取得（最新順）
+        sorted_books = sorted(books, key=lambda b: str(b.get("pub_date", "")), reverse=True)
+        thumbs = []
+        for b in sorted_books[:3]:
+            cp = cover_url_or_none(b.get("slug"))
+            if cp:
+                thumbs.append(f'<img src="{html.escape(cp)}" alt="">')
+        thumbs_html = ""
+        if thumbs:
+            thumbs_html = f'<div class="series-thumbs">{"".join(thumbs)}</div>'
+
+        cards.append(f"""
+      <a href="#s{section_num}" class="series-overview-card">
+        {thumbs_html}
+        <div class="series-overview-num">SERIES {section_num:02d}</div>
+        <h3 class="series-overview-title">{html.escape(config["display_name"])}</h3>
+        <p class="series-overview-concept">{html.escape(config["concept"])}</p>
+        <div class="series-overview-count">全{len(books)}冊</div>
+      </a>""")
+        section_num += 1
+
+    if not cards:
         return ""
-    cards = "\n".join(
-        render_book_card(b, SERIES_CONFIG.get(b.get("series_id"), {"cover_class": "device"})["cover_class"])
-        for b in new_books
-    )
     return f"""
-<section class="new-releases">
+<section class="series-overview">
   <div class="wrap">
-    <div class="section-label">NEW RELEASES</div>
-    <h2 class="section-title">🆕 新刊</h2>
-    <div class="new-grid">
-      {cards}
+    <div class="section-label">ALL SERIES</div>
+    <h2 class="section-title">シリーズ一覧</h2>
+    <div class="series-overview-grid">
+      {''.join(cards)}
     </div>
   </div>
 </section>"""
@@ -363,8 +384,8 @@ h1, h2, h3 { font-family: 'Playfair Display', "Hiragino Mincho ProN", "Yu Mincho
 .cta.outline { background: transparent; color: var(--accent); }
 .cta.outline:hover { background: var(--accent); color: #fff; }
 
-.new-releases {
-  padding: 60px 0 40px;
+.series-overview {
+  padding: 60px 0 50px;
   background: var(--paper);
   border-bottom: 1px solid var(--line);
 }
@@ -383,7 +404,72 @@ h1, h2, h3 { font-family: 'Playfair Display', "Hiragino Mincho ProN", "Yu Mincho
   margin: 0 0 36px;
   letter-spacing: 0.02em;
 }
-.new-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+.series-overview-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+.series-overview-card {
+  background: #fff;
+  border: 1px solid var(--line);
+  padding: 24px;
+  text-decoration: none;
+  color: var(--ink);
+  display: flex;
+  flex-direction: column;
+  transition: box-shadow 0.25s, transform 0.25s, border-color 0.25s;
+}
+.series-overview-card:hover {
+  box-shadow: 0 10px 28px rgba(0,0,0,0.08);
+  transform: translateY(-3px);
+  border-color: var(--accent);
+}
+.series-thumbs {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 16px;
+  justify-content: center;
+}
+.series-thumbs img {
+  width: 32%;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+}
+.series-overview-num {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-size: 12px;
+  letter-spacing: 0.15em;
+  color: var(--accent);
+  margin-bottom: 6px;
+  text-align: center;
+}
+.series-overview-title {
+  font-family: 'Playfair Display', "Hiragino Mincho ProN", "Yu Mincho", serif;
+  font-size: 18px;
+  margin: 0 0 10px;
+  font-weight: 500;
+  text-align: center;
+  line-height: 1.4;
+}
+.series-overview-concept {
+  font-family: 'Raleway', sans-serif;
+  font-size: 13px;
+  color: var(--ink-soft);
+  line-height: 1.7;
+  margin: 0 0 14px;
+  flex: 1;
+}
+.series-overview-count {
+  font-family: 'Raleway', sans-serif;
+  font-size: 11px;
+  color: var(--ink-mute);
+  letter-spacing: 0.1em;
+  text-align: center;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
 
 .series-nav {
   padding: 32px 24px;
@@ -527,7 +613,7 @@ h1, h2, h3 { font-family: 'Playfair Display', "Hiragino Mincho ProN", "Yu Mincho
   .hero { padding: 60px 24px 40px; }
   .hero h1 { font-size: 36px; }
   .hero .sub-en { font-size: 16px; }
-  .new-grid, .books-grid, .books-grid.cols-2 { grid-template-columns: 1fr; max-width: 360px; margin-left: auto; margin-right: auto; }
+  .series-overview-grid, .books-grid, .books-grid.cols-2 { grid-template-columns: 1fr; max-width: 360px; margin-left: auto; margin-right: auto; }
   .series-section { padding: 50px 0 30px; }
   .section-title, .series-title { font-size: 22px; }
 }
@@ -567,7 +653,7 @@ def render_html(books):
         sections_html.append(render_series_section(sid or "standalone", slist, config, section_num))
         section_num += 1
 
-    new_releases_html = render_new_releases(books)
+    series_overview_html = render_series_overview(series_groups)
     nav_html = render_nav(series_groups)
 
     total = len(books)
@@ -603,7 +689,7 @@ def render_html(books):
   </div>
 </section>
 
-{new_releases_html}
+{series_overview_html}
 
 {nav_html}
 
