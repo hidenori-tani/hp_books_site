@@ -164,8 +164,6 @@ def render_book_card(book, cover_class):
 
     # バッジ
     badges = []
-    if is_new(pub_date):
-        badges.append('<span class="badge new">' + ("NEW" if lang == "en" else "新刊") + "</span>")
     if asin in PAPERBACK_MAP:
         badges.append('<span class="badge paperback">📖 ' + ("Paperback" if lang == "en" else "紙版") + "</span>")
     if rating and review_count and review_count >= 1:
@@ -698,7 +696,7 @@ def render_html(books):
 <section class="footer-cta">
   <div class="wrap">
     <h2>すべての著作を一覧で見る</h2>
-    <p>Amazon Author Central では、ペーパーバック版を含む全著作・新刊情報・著者プロフィールをご覧いただけます。</p>
+    <p>Amazon Author Central では、ペーパーバック版を含む全著作・著者プロフィールをご覧いただけます。</p>
     <div class="cta-row">
       <a class="cta" href="https://www.amazon.co.jp/stores/author/B0DBNS3FZF" target="_blank" rel="noopener">
         日本語：amazon.co.jp
