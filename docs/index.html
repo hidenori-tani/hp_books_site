@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>著書 / Books — 谷英典</title>
+<meta name="description" content="谷英典（横浜薬科大学准教授）の著書一覧。lncRNA研究、AI時代の研究者の働き方、装置運用世代シリーズなど23冊。">
+<style>
+:root {
+  --ink: #1a1a1a;
+  --ink-soft: #555;
+  --paper: #fafaf7;
+  --accent: #2c4a6e;
+  --accent-soft: #5a7a9e;
+  --line: #d8d4cc;
+  --new: #b8412e;
+  --paperback: #6b5d3f;
+}
+* { box-sizing: border-box; }
+body {
+  font-family: "Hiragino Mincho ProN", "Yu Mincho", "Noto Serif JP", serif;
+  color: var(--ink);
+  background: var(--paper);
+  margin: 0;
+  line-height: 1.7;
+  font-size: 16px;
+}
+.wrap { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+
+.hero {
+  text-align: center;
+  padding: 70px 24px 50px;
+  border-bottom: 1px solid var(--line);
+}
+.hero h1 { font-size: 38px; margin: 0 0 6px; letter-spacing: 0.05em; font-weight: 500; }
+.hero .sub-en {
+  font-family: "Garamond", "EB Garamond", serif;
+  font-size: 16px; color: var(--ink-soft);
+  letter-spacing: 0.2em; margin-bottom: 22px;
+}
+.hero .lead { max-width: 640px; margin: 0 auto 28px; color: var(--ink-soft); font-size: 16px; }
+.cta-row { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+.cta {
+  display: inline-block; padding: 11px 24px;
+  background: var(--accent); color: #fff; text-decoration: none;
+  font-size: 13px; letter-spacing: 0.08em;
+  border: 1px solid var(--accent); transition: background 0.2s;
+}
+.cta:hover { background: var(--accent-soft); }
+.cta.outline { background: transparent; color: var(--accent); }
+.cta.outline:hover { background: var(--accent); color: #fff; }
+
+.new-releases {
+  padding: 50px 0 30px;
+  background: #fff;
+  border-bottom: 1px solid var(--line);
+}
+.section-label { text-align: center; font-size: 12px; letter-spacing: 0.3em; color: var(--ink-soft); margin-bottom: 6px; }
+.section-title { text-align: center; font-size: 24px; margin: 0 0 32px; font-weight: 500; letter-spacing: 0.05em; }
+.new-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+
+.series-nav {
+  padding: 28px 24px;
+  background: var(--paper);
+  border-bottom: 1px solid var(--line);
+  text-align: center;
+}
+.series-nav-inner {
+  display: flex; flex-wrap: wrap;
+  justify-content: center; gap: 8px 22px;
+  max-width: 900px; margin: 0 auto;
+}
+.series-nav a {
+  color: var(--accent); text-decoration: none;
+  font-size: 13px; padding: 4px 0;
+  border-bottom: 1px solid transparent; transition: border-color 0.2s;
+}
+.series-nav a:hover { border-color: var(--accent); }
+.series-nav .count { color: var(--ink-soft); font-size: 11px; margin-left: 4px; }
+
+.series-section { padding: 60px 0 30px; border-bottom: 1px solid var(--line); }
+.series-section:last-of-type { border-bottom: none; }
+.series-header { text-align: center; margin-bottom: 32px; }
+.series-num {
+  display: inline-block; font-family: "Garamond", serif;
+  font-size: 13px; letter-spacing: 0.3em;
+  color: var(--accent); margin-bottom: 6px;
+}
+.series-title { font-size: 24px; margin: 0 0 10px; font-weight: 500; }
+.series-concept { color: var(--ink-soft); max-width: 600px; margin: 0 auto; font-size: 14px; }
+
+.books-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 24px; }
+.books-grid.cols-2 { grid-template-columns: repeat(2, 1fr); max-width: 700px; margin-left: auto; margin-right: auto; }
+.books-grid.cols-1 { grid-template-columns: 1fr; max-width: 340px; margin-left: auto; margin-right: auto; }
+
+.book-card {
+  background: #fff; border: 1px solid var(--line);
+  padding: 20px; display: flex; flex-direction: column;
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+.book-card:hover {
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+  transform: translateY(-2px);
+}
+.cover {
+  aspect-ratio: 2 / 3;
+  background: linear-gradient(135deg, #e8e1d4 0%, #c9bfa9 100%);
+  margin-bottom: 14px;
+  display: flex; align-items: center; justify-content: center;
+  padding: 14px; text-align: center;
+  color: var(--ink); font-size: 13px; line-height: 1.4; font-weight: 500;
+  overflow: hidden;
+}
+.cover img { width: 100%; height: 100%; object-fit: cover; }
+.cover.lncrna  { background: linear-gradient(135deg, #d4e1e8 0%, #95b3c4 100%); }
+.cover.device  { background: linear-gradient(135deg, #2c4a6e 0%, #5a7a9e 100%); color: #fff; }
+.cover.ai      { background: linear-gradient(135deg, #f0e8d4 0%, #c9b888 100%); }
+.cover.science { background: linear-gradient(135deg, #e8d4d4 0%, #b89595 100%); }
+.cover.career  { background: linear-gradient(135deg, #d4e8d4 0%, #95b895 100%); }
+.cover.health  { background: linear-gradient(135deg, #f0d4e1 0%, #c995b3 100%); }
+.cover.en      { background: linear-gradient(135deg, #1a1a1a 0%, #555 100%); color: #fff; font-family: "Garamond", serif; letter-spacing: 0.05em; }
+
+.badges { display: flex; gap: 6px; margin-bottom: 8px; flex-wrap: wrap; }
+.badge { font-size: 10px; padding: 2px 7px; border-radius: 2px; letter-spacing: 0.05em; }
+.badge.new { background: var(--new); color: #fff; }
+.badge.paperback { background: var(--paperback); color: #fff; }
+.badge.review { background: #d4a000; color: #fff; }
+
+.book-title { font-size: 15px; line-height: 1.5; margin: 0 0 6px; font-weight: 500; }
+.book-subtitle { font-size: 12px; color: var(--ink-soft); margin: 0 0 10px; line-height: 1.5; }
+.book-meta { font-size: 11px; color: var(--ink-soft); margin-bottom: 14px; margin-top: auto; }
+.book-actions { display: flex; flex-direction: column; gap: 5px; }
+.btn {
+  display: block; text-align: center;
+  padding: 7px 10px; text-decoration: none; font-size: 12px;
+  border: 1px solid var(--accent); color: var(--accent); transition: all 0.2s;
+}
+.btn:hover { background: var(--accent); color: #fff; }
+.btn.primary { background: var(--accent); color: #fff; }
+.btn.primary:hover { background: var(--accent-soft); border-color: var(--accent-soft); }
+
+.footer-cta { padding: 70px 24px; background: #fff; text-align: center; border-top: 1px solid var(--line); }
+.footer-cta h2 { font-size: 22px; margin: 0 0 14px; font-weight: 500; }
+.footer-cta p { color: var(--ink-soft); margin-bottom: 28px; }
+.footer-meta { padding: 20px; text-align: center; font-size: 11px; color: var(--ink-soft); }
+
+@media (max-width: 720px) {
+  .hero h1 { font-size: 28px; }
+  .new-grid, .books-grid, .books-grid.cols-2 { grid-template-columns: 1fr; max-width: 340px; margin-left: auto; margin-right: auto; }
+  .series-section { padding: 40px 0 20px; }
+}
+</style>
+</head>
+<body>
+
+<section class="hero">
+  <div class="wrap">
+    <h1>著書</h1>
+    <div class="sub-en">BOOKS</div>
+    <p class="lead">
+      ライフサイエンス研究（lncRNA・RNA創薬）から、AI時代に研究者が生き残る技法まで——<br>
+      現在 23 冊を執筆しています。
+    </p>
+    <div class="cta-row">
+      <a class="cta" href="https://www.amazon.co.jp/stores/author/B0DBNS3FZF" target="_blank" rel="noopener">
+        Amazon Author Central（日本語）
+      </a>
+      <a class="cta outline" href="https://www.amazon.com/author/hidenoritani" target="_blank" rel="noopener">
+        Author Central (English)
+      </a>
+    </div>
+  </div>
+</section>
+
+
+<section class="new-releases">
+  <div class="wrap">
+    <div class="section-label">NEW RELEASES</div>
+    <h2 class="section-title">🆕 新刊</h2>
+    <div class="new-grid">
+      
+      <article class="book-card">
+        <div class="cover en">The Device<br> Generation</div>
+        <div class="badges"><span class="badge new">NEW</span></div>
+        <h3 class="book-title">The Device Generation</h3>
+        
+        <div class="book-meta">2026.05.06 · English</div>
+        <div class="book-actions">
+          <a class="btn primary" href="https://www.amazon.com/dp/B0GZNGKQ84" target="_blank" rel="noopener">Amazon (US)</a>
+        </div>
+      </article>
+
+      <article class="book-card">
+        <div class="cover en">The Council <br>in Your Heart</div>
+        <div class="badges"><span class="badge new">NEW</span></div>
+        <h3 class="book-title">The Council in Your Heart</h3>
+        
+        <div class="book-meta">2026.05.05 · English</div>
+        <div class="book-actions">
+          <a class="btn primary" href="https://www.amazon.com/dp/B0GZKQZYBX" target="_blank" rel="noopener">Amazon (US)</a>
+        </div>
+      </article>
+
+      <article class="book-card">
+        <div class="cover en">Brain Fry<br> Protocol</div>
+        <div class="badges"><span class="badge new">NEW</span></div>
+        <h3 class="book-title">Brain Fry Protocol</h3>
+        
+        <div class="book-meta">2026.05.04 · English</div>
+        <div class="book-actions">
+          <a class="btn primary" href="https://www.amazon.com/dp/B0GZHJ3Z3F" target="_blank" rel="noopener">Amazon (US)</a>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+
+<nav class="series-nav">
+  <div class="series-nav-inner">
+    <a href="#s1">01 lncRNA・分子生物学シリーズ<span class="count">(3)</span></a><a href="#s2">02 装置運用世代シリーズ<span class="count">(3)</span></a><a href="#s3">03 AI × 研究シリーズ<span class="count">(3)</span></a><a href="#s4">04 科学史シリーズ<span class="count">(2)</span></a><a href="#s5">05 研究者キャリアシリーズ<span class="count">(2)</span></a><a href="#s6">06 健康・分子生物学シリーズ<span class="count">(2)</span></a><a href="#s7">07 The Device Generation Series<span class="count">(3)</span></a><a href="#s8">08 AI for Researchers Series<span class="count">(2)</span></a><a href="#s9">09 Science History (English)<span class="count">(1)</span></a>
+  </div>
+</nav>
+
+
+<section class="series-section" id="s1">
+  <div class="wrap">
+    <div class="series-header">
+      <div class="series-num">SERIES 01</div>
+      <h2 class="series-title">lncRNA・分子生物学シリーズ</h2>
+      <p class="series-concept">タンパク質を作らないRNAが拓く新しい医療と生命像。研究現場からの最前線レポート。</p>
+    </div>
+    <div class="books-grid">
+      
+      <article class="book-card">
+        <div class="cover lncrna">長鎖ノンコーディングRNAが<br>織りなす生体分子ネットワーク</div>
+        
+        <h3 class="book-title">長鎖ノンコーディングRNAが織りなす生体分子ネットワーク</h3>
+        
+        <div class="book-meta">2025.04.01</div>
+        <div class="book-actions">
+          <a class="btn primary" href="https://www.amazon.co.jp/dp/B0F43LXJB4" target="_blank" rel="noopener">Kindleで読む</a>
+        </div>
+      </article>
+
+      <article class="book-card">
+        <div class="cover lncrna">RNA創薬革命 - mRNA<br>ワクチンからがん治療薬まで</div>
+        
+        <h3 class="book-title">RNA創薬革命 - mRNAワクチンからがん治療薬まで</h3>
+        
+        <div class="book-meta">2024.10.01</div>
+        <div class="book-actions">
+          <a class="btn primary" href="https://www.amazon.co.jp/dp/B0DJYLCF1R" target="_blank" rel="noopener">Kindleで読む</a>
+        </div>
+      </article>
+
+      <article class="book-card">
+        <div class="cover lncrna">隠されていた生命の指令書 - <br>長鎖ノンコーディングRNA</div>
+        
+        <h3 class="book-title">隠されていた生命の指令書 - 長鎖ノンコーディングRNA</h3>
+        
+        <div class="book-meta">2024.08.01</div>
+        <div class="book-actions">
+          <a class="btn primary" href="https://www.amazon.co.jp/dp/B0DBSMC7MW" target="_blank" rel="noopener">Kindleで読む</a>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+<section class="series-section" id="s2">
+  <div class="wrap">
+    <div class="series-header">
+      <div class="series-num">SERIES 02</div>
+      <h2 class="series-title">装置運用世代シリーズ</h2>
+      <p class="series-concept">「意志」ではなく「装置」で生きる——HSP研究者がAI時代に編み出した、中年期サバイバル術。</p>
+    </div>
+    <div class="books-grid">
+      
+      <article class="book-card">
+        <div class="cover device">心の中の評議会</div>
+        <div class="badges"><span class="badge new">新刊</span><span class="badge paperback">📖 紙版</span><span class="badge review">★5.0</span></div>
+        <h3 class="book-title">心の中の評議会</h3>
+        
+        <div class="book-meta">2026.05.01</div>
+        <div class="book-actions">
+          <a class="btn primary" href="https://www.amazon.co.jp/dp/B0GZJF83SV" target="_blank" rel="noopener">Kindleで読む</a>
+        </div>
+      </article>
+
+      <article class="book-card">
+        <div class="cover device">AI時代の脳疲労マネジメント</div>
+        <div class="badges"><span class="badge new">新刊</span><span class="badge paperback">📖 紙版</span></div>
+        <h3 class="book-title">AI時代の脳疲労マネジメント</h3>
+        
+        <div class="book-meta">2026.05.01</div>
+        <div class="book-actions">
+          <a class="btn primary" href="https://www.amazon.co.jp/dp/B0GZCPDL6V" target="_blank" rel="noopener">Kindleで読む</a>
+        </div>
+      </article>
+
+      <article class="book-card">
+        <div class="cover device">就職氷河期世代の生き延び方</div>
+        <div class="badges"><span class="badge new">新刊</span><span class="badge paperback">📖 紙版</span></div>
+        <h3 class="book-title">就職氷河期世代の生き延び方</h3>
+        
+        <div class="book-meta">2026.05.01</div>
+        <div class="book-actions">
+          <a class="btn primary" href="https://www.amazon.co.jp/dp/B0GX5L2GC2" target="_blank" rel="noopener">Kindleで読む</a>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+<section class="series-section" id="s3">
+  <div class="wrap">
+    <div class="series-header">
+      <div class="series-num">SERIES 03</div>
+      <h2 class="series-title">AI × 研究シリーズ</h2>
+      <p class="series-concept">生成AIを「考える相棒」として使うための、研究者発の実践ノウハウ。</p>
+    </div>
+    <div class="books-grid">
+      
+      <article class="book-card">
+        <div class="cover ai">Wet研究者のための生成<br>AI×バイオインフォ入門</div>
+        <div class="badges"><span class="badge new">新刊</span></div>
+        <h3 class="book-title">Wet研究者のための生成AI×バイオインフォ入門</h3>
+        
+        <div class="book-meta">2026.05.01</div>
+        <div class="book-actions">
+          <a class="btn primary" href="https://www.amazon.co.jp/dp/B0GX2WZ16Z" target="_blank" rel="noopener">Kindleで読む</a>
+        </div>
+      </article>
+
+      <article class="book-card">
+        <div class="cover ai">AI時代を生き抜く知的武装術</div>
+        <div class="badges"><span class="badge new">新刊</span><span class="badge review">★5.0</span></div>
+        <h3 class="book-title">AI時代を生き抜く知的武装術</h3>
+        
+        <div class="book-meta">2026.04.01</div>
+        <div class="book-actions">
+          <a class="btn primary" href="https://www.amazon.co.jp/dp/B0F79TZYBH" target="_blank" rel="noopener">Kindleで読む</a>
+        </div>
+      </article>
+
+      <article class="book-card">
+        <div class="cover ai">「考えすぎる脳」の取扱説明書</div>
+        <div class="badges"><span class="badge new">新刊</span></div>
+        <h3 class="book-title">「考えすぎる脳」の取扱説明書</h3>
+        
+        <div class="book-meta">2026.04.01</div>
+        <div class="book-actions">
+          <a class="btn primary" href="https://www.amazon.co.jp/dp/B0GWR38RBZ" target="_blank" rel="noopener">Kindleで読む</a>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+<section class="series-section" id="s4">
+  <div class="wrap">
+    <div class="series-header">
+      <div class="series-num">SERIES 04</div>
+      <h2 class="series-title">科学史シリーズ</h2>
+      <p class="series-concept">ノーベル賞の光と影。受賞者と「逃した天才たち」の両側から、科学の発展史を描く。</p>
+    </div>
+    <div class="books-grid cols-2">
+      
+      <article class="book-card">
+        <div class="cover science">ノーベル賞を逃した天才たち</div>
+        <div class="badges"><span class="badge new">新刊</span></div>
+        <h3 class="book-title">ノーベル賞を逃した天才たち</h3>
+        
+        <div class="book-meta">2026.04.01</div>
+        <div class="book-actions">
+          <a class="btn primary" href="https://www.amazon.co.jp/dp/B0D6WRWMVW" target="_blank" rel="noopener">Kindleで読む</a>
+        </div>
+      </article>
+
+      <article class="book-card">
+        <div class="cover science">ノーベル賞に輝いた！<br>生命の謎を解く8大発明</div>
+        <div class="badges"><span class="badge review">★5.0</span></div>
+        <h3 class="book-title">ノーベル賞に輝いた！生命の謎を解く8大発明</h3>
+        
+        <div class="book-meta">2025.05.01</div>
+        <div class="book-actions">
+          <a class="btn primary" href="https://www.amazon.co.jp/dp/B0F6L766W4" target="_blank" rel="noopener">Kindleで読む</a>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+<section class="series-section" id="s5">
+  <div class="wrap">
+    <div class="series-header">
+      <div class="series-num">SERIES 05</div>
+      <h2 class="series-title">研究者キャリアシリーズ</h2>
+      <p class="series-concept">アカデミアで生き残るための、地に足のついた実装ガイド。</p>
+    </div>
+    <div class="books-grid cols-2">
+      
+      <article class="book-card">
+        <div class="cover career">研究者として生き抜く全技術</div>
+        <div class="badges"><span class="badge new">新刊</span></div>
+        <h3 class="book-title">研究者として生き抜く全技術</h3>
+        
+        <div class="book-meta">2026.04.01</div>
+        <div class="book-actions">
+          <a class="btn primary" href="https://www.amazon.co.jp/dp/B0DBV8DB3L" target="_blank" rel="noopener">Kindleで読む</a>
+        </div>
+      </article>
+
+      <article class="book-card">
+        <div class="cover career">理系のための研究<br>者・大学教員への道</div>
+        
+        <h3 class="book-title">理系のための研究者・大学教員への道</h3>
+        
+        <div class="book-meta">2024.07.01</div>
+        <div class="book-actions">
+          <a class="btn primary" href="https://www.amazon.co.jp/dp/B0DBQCLHBH" target="_blank" rel="noopener">Kindleで読む</a>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+<section class="series-section" id="s6">
+  <div class="wrap">
+    <div class="series-header">
+      <div class="series-num">SERIES 06</div>
+      <h2 class="series-title">健康・分子生物学シリーズ</h2>
+      <p class="series-concept">薬学部教員が分子レベルで読み解く、日常の健康と美容。</p>
+    </div>
+    <div class="books-grid cols-2">
+      
+      <article class="book-card">
+        <div class="cover health">食べない力で健康になる</div>
+        
+        <h3 class="book-title">食べない力で健康になる</h3>
+        
+        <div class="book-meta">2025.06.01</div>
+        <div class="book-actions">
+          <a class="btn primary" href="https://www.amazon.co.jp/dp/B0FDYXMLYG" target="_blank" rel="noopener">Kindleで読む</a>
+        </div>
+      </article>
+
+      <article class="book-card">
+        <div class="cover health">分子レベルでわか<br>る！女性の美容と健康</div>
+        
+        <h3 class="book-title">分子レベルでわかる！女性の美容と健康</h3>
+        
+        <div class="book-meta">2025.03.01</div>
+        <div class="book-actions">
+          <a class="btn primary" href="https://www.amazon.co.jp/dp/B0DZGV4WSC" target="_blank" rel="noopener">Kindleで読む</a>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+<section class="series-section" id="s7">
+  <div class="wrap">
+    <div class="series-header">
+      <div class="series-num">SERIES 07</div>
+      <h2 class="series-title">The Device Generation Series</h2>
+      <p class="series-concept">Surviving midlife in the age of AI — three books on building life-sustaining apparatus.</p>
+    </div>
+    <div class="books-grid">
+      
+      <article class="book-card">
+        <div class="cover en">The Device<br> Generation</div>
+        <div class="badges"><span class="badge new">NEW</span></div>
+        <h3 class="book-title">The Device Generation</h3>
+        
+        <div class="book-meta">2026.05.06 · English</div>
+        <div class="book-actions">
+          <a class="btn primary" href="https://www.amazon.com/dp/B0GZNGKQ84" target="_blank" rel="noopener">Amazon (US)</a>
+        </div>
+      </article>
+
+      <article class="book-card">
+        <div class="cover en">The Council <br>in Your Heart</div>
+        <div class="badges"><span class="badge new">NEW</span></div>
+        <h3 class="book-title">The Council in Your Heart</h3>
+        
+        <div class="book-meta">2026.05.05 · English</div>
+        <div class="book-actions">
+          <a class="btn primary" href="https://www.amazon.com/dp/B0GZKQZYBX" target="_blank" rel="noopener">Amazon (US)</a>
+        </div>
+      </article>
+
+      <article class="book-card">
+        <div class="cover en">Brain Fry<br> Protocol</div>
+        <div class="badges"><span class="badge new">NEW</span></div>
+        <h3 class="book-title">Brain Fry Protocol</h3>
+        
+        <div class="book-meta">2026.05.04 · English</div>
+        <div class="book-actions">
+          <a class="btn primary" href="https://www.amazon.com/dp/B0GZHJ3Z3F" target="_blank" rel="noopener">Amazon (US)</a>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+<section class="series-section" id="s8">
+  <div class="wrap">
+    <div class="series-header">
+      <div class="series-num">SERIES 08</div>
+      <h2 class="series-title">AI for Researchers Series</h2>
+      <p class="series-concept">Practical AI techniques from a wet-lab biologist&#x27;s perspective.</p>
+    </div>
+    <div class="books-grid cols-2">
+      
+      <article class="book-card">
+        <div class="cover en">AI-Powered Bioinformatic<br>s for Wet Lab Researchers</div>
+        <div class="badges"><span class="badge new">NEW</span></div>
+        <h3 class="book-title">AI-Powered Bioinformatics for Wet Lab Researchers</h3>
+        
+        <div class="book-meta">2026.04.15 · English</div>
+        <div class="book-actions">
+          <a class="btn primary" href="https://www.amazon.com/dp/B0GX6XG19T" target="_blank" rel="noopener">Amazon (US)</a>
+        </div>
+      </article>
+
+      <article class="book-card">
+        <div class="cover en">AI Journaling</div>
+        <div class="badges"><span class="badge new">NEW</span></div>
+        <h3 class="book-title">AI Journaling</h3>
+        
+        <div class="book-meta">2026.04.11 · English</div>
+        <div class="book-actions">
+          <a class="btn primary" href="https://www.amazon.com/dp/B0GWTL1Y7J" target="_blank" rel="noopener">Amazon (US)</a>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+<section class="series-section" id="s9">
+  <div class="wrap">
+    <div class="series-header">
+      <div class="series-num">SERIES 09</div>
+      <h2 class="series-title">Science History (English)</h2>
+      <p class="series-concept">Stories of brilliant discoverers history left behind.</p>
+    </div>
+    <div class="books-grid cols-1">
+      
+      <article class="book-card">
+        <div class="cover en">Geniuses Who Miss<br>ed the Nobel Prize</div>
+        <div class="badges"><span class="badge new">NEW</span></div>
+        <h3 class="book-title">Geniuses Who Missed the Nobel Prize</h3>
+        
+        <div class="book-meta">2026.04.25 · English</div>
+        <div class="book-actions">
+          <a class="btn primary" href="https://www.amazon.com/dp/B0GXRVS27Y" target="_blank" rel="noopener">Amazon (US)</a>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+<section class="series-section" id="s10">
+  <div class="wrap">
+    <div class="series-header">
+      <div class="series-num">SERIES 10</div>
+      <h2 class="series-title">Standalone English Titles</h2>
+      <p class="series-concept">Independent works awaiting series integration.</p>
+    </div>
+    <div class="books-grid cols-2">
+      
+      <article class="book-card">
+        <div class="cover en">Empty Plate<br>, Full Life</div>
+        
+        <h3 class="book-title">Empty Plate, Full Life</h3>
+        
+        <div class="book-meta">2025.07.02 · English</div>
+        <div class="book-actions">
+          <a class="btn primary" href="https://www.amazon.com/dp/B0FGBTVZZM" target="_blank" rel="noopener">Amazon (US)</a>
+        </div>
+      </article>
+
+      <article class="book-card">
+        <div class="cover en">The Hidden Directive of <br>Life - Long Noncoding RNA</div>
+        
+        <h3 class="book-title">The Hidden Directive of Life - Long Noncoding RNA</h3>
+        <p class="book-subtitle">The Molecular Biology of Genome&#x27;s Dark Matter</p>
+        <div class="book-meta">2024.08.06 · English</div>
+        <div class="book-actions">
+          <a class="btn primary" href="https://www.amazon.com/dp/B0DC963221" target="_blank" rel="noopener">Amazon (US)</a>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="footer-cta">
+  <div class="wrap">
+    <h2>すべての著作を一覧で見る</h2>
+    <p>Amazon Author Central では、ペーパーバック版を含む全著作・新刊情報・著者プロフィールをご覧いただけます。</p>
+    <div class="cta-row">
+      <a class="cta" href="https://www.amazon.co.jp/stores/author/B0DBNS3FZF" target="_blank" rel="noopener">
+        日本語：amazon.co.jp
+      </a>
+      <a class="cta outline" href="https://www.amazon.com/author/hidenoritani" target="_blank" rel="noopener">
+        English: amazon.com
+      </a>
+    </div>
+  </div>
+</section>
+
+<div class="footer-meta">Last updated: 2026-05-16 20:28</div>
+
+</body>
+</html>
