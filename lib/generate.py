@@ -14,6 +14,7 @@ GitHub Pages にデプロイ後、Wix HTML iframe ウィジェットから読み
 import glob
 import html
 import os
+import shutil
 import sys
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -26,15 +27,19 @@ from series_config import SERIES_CONFIG, STANDALONE_SECTION, PAPERBACK_MAP
 SCRIPT_DIR = Path(__file__).parent
 SITE_ROOT = SCRIPT_DIR.parent
 BOOKS_DIR = SITE_ROOT.parent / "marketing" / "books"
+SOURCE_COVERS_DIR = SITE_ROOT.parent / "marketing" / "covers"
 OUTPUT_PATH = SITE_ROOT / "docs" / "index.html"
 COVERS_DIR = SITE_ROOT / "docs" / "covers"
 
 # 「新刊」判定: pub_date が今日から3ヶ月以内
 NEW_THRESHOLD = datetime.now() - timedelta(days=90)
 
+# 日本語のみ表示（英語シリーズと standalone は除外）
+EXCLUDE_LANG = "en"
+
 
 def load_books():
-    """books/*.md を読み込み、販売中のみ返す"""
+    """books/*.md を読み込み、販売中の日本語書籍のみ返す"""
     books = []
     for md_path in sorted(glob.glob(str(BOOKS_DIR / "*.md"))):
         with open(md_path, encoding="utf-8") as f:
@@ -55,8 +60,35 @@ def load_books():
             continue
         if not fm.get("asin"):
             continue
+        # 英語シリーズ・standalone を除外
+        sid = fm.get("series_id")
+        if sid is None:
+            continue  # standalone は英語のみなのでスキップ
+        config = SERIES_CONFIG.get(sid)
+        if config and config.get("lang") == EXCLUDE_LANG:
+            continue
         books.append(fm)
     return books
+
+
+def sync_covers(books):
+    """marketing/covers/<slug>/kindle.jpg を docs/covers/<slug>.jpg にコピー"""
+    COVERS_DIR.mkdir(parents=True, exist_ok=True)
+    copied = 0
+    for book in books:
+        slug = book.get("slug")
+        if not slug:
+            continue
+        src = SOURCE_COVERS_DIR / slug / "kindle.jpg"
+        if not src.exists():
+            continue
+        dst = COVERS_DIR / f"{slug}.jpg"
+        # mtime チェックで不要なコピーを回避
+        if dst.exists() and dst.stat().st_mtime >= src.stat().st_mtime:
+            continue
+        shutil.copy2(src, dst)
+        copied += 1
+    return copied
 
 
 def is_new(pub_date_str):
@@ -73,14 +105,16 @@ def is_new(pub_date_str):
         return False
 
 
-def cover_url_or_none(asin):
-    """docs/covers/<ASIN>.jpg があればそのパスを返す"""
-    p = COVERS_DIR / f"{asin}.jpg"
+def cover_url_or_none(slug):
+    """docs/covers/<slug>.jpg があればそのパスを返す"""
+    if not slug:
+        return None
+    p = COVERS_DIR / f"{slug}.jpg"
     if p.exists():
-        return f"covers/{asin}.jpg"
-    p = COVERS_DIR / f"{asin}.png"
+        return f"covers/{slug}.jpg"
+    p = COVERS_DIR / f"{slug}.png"
     if p.exists():
-        return f"covers/{asin}.png"
+        return f"covers/{slug}.png"
     return None
 
 
@@ -116,9 +150,10 @@ def render_book_card(book, cover_class):
         lang = "en" if all(ord(c) < 128 for c in title[:20]) else "jp"
 
     # カバー画像 or プレースホルダ
-    cover_path = cover_url_or_none(asin)
+    slug = book.get("slug")
+    cover_path = cover_url_or_none(slug)
     if cover_path:
-        cover_html = f'<div class="cover"><img src="{html.escape(cover_path)}" alt="{html.escape(title)}"></div>'
+        cover_html = f'<div class="cover has-image"><img src="{html.escape(cover_path)}" alt="{html.escape(title)}"></div>'
     else:
         # タイトルを2-3行に折って表示
         display = title.split(":")[0].split("：")[0]
@@ -416,8 +451,13 @@ h1, h2, h3 { font-family: 'Playfair Display', "Hiragino Mincho ProN", "Yu Mincho
   color: var(--ink); font-size: 13px; line-height: 1.5;
   font-family: 'Playfair Display', "Hiragino Mincho ProN", serif;
   overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
 }
-.cover img { width: 100%; height: 100%; object-fit: cover; }
+.cover.has-image {
+  background: #fff;
+  padding: 0;
+}
+.cover img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .cover.lncrna  { background: linear-gradient(135deg, #dce6ec 0%, #8ba8b8 100%); color: #1a1a1a; }
 .cover.device  { background: linear-gradient(135deg, #1a3050 0%, #4a6890 100%); color: #fff; }
 .cover.ai      { background: linear-gradient(135deg, #f0eadc 0%, #c4b288 100%); color: #1a1a1a; }
@@ -593,7 +633,9 @@ def render_html(books):
 
 def main():
     books = load_books()
-    print(f"Loaded {len(books)} published books from {BOOKS_DIR}")
+    print(f"Loaded {len(books)} Japanese published books from {BOOKS_DIR}")
+    copied = sync_covers(books)
+    print(f"Synced {copied} cover image(s) to {COVERS_DIR}")
     html_out = render_html(books)
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
     with open(OUTPUT_PATH, "w", encoding="utf-8") as f:

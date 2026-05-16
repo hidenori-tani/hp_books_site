@@ -1,6 +1,6 @@
 # hp_books_site — hidenoritani.com 著書ページ自動生成
 
-`outreach-books/marketing/books/*.md` の 23冊メタデータから、
+`outreach-books/marketing/books/*.md` の 日本語15冊メタデータから、
 hidenoritani.com の **著書ページのみ** を自動生成し、Wix の iframe で表示するパイプライン。
 
 **他ページ（ホーム/研究概要/研究業績/経歴/担当科目/連絡先/English）には一切触れない。**
@@ -141,10 +141,12 @@ git push -u origin main
 
 そして `books/<slug>.md` の `series_id:` を `new-series-id` に設定 → 自動表示。
 
-### 表紙画像を本物に差し替え
+### 表紙画像
 
-`docs/covers/<ASIN>.jpg` または `.png` を配置するだけ。
-ジェネレータが自動検出し、グラデーションカード→画像に切り替えます。
+`marketing/covers/<slug>/kindle.jpg` が真実源。ジェネレータが自動で `docs/covers/<slug>.jpg` にコピーします。
+カバーがない書籍はグラデーションカードでフォールバック表示。
+
+新規カバーは `/kindle-cover` で生成 → 次回 `/kindle-update-hp` で自動同期。
 
 ### ペーパーバック版バッジを付ける
 
