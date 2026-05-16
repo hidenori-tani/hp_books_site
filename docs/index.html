@@ -19,8 +19,6 @@
   --accent: #0057E1;
   --accent-soft: #4a85ea;
   --line: #e8e6e6;
-  --new: #c0392b;
-  --paperback: #7a6a4a;
 }
 * { box-sizing: border-box; }
 body {
@@ -101,70 +99,101 @@ h1, h2, h3 { font-family: 'Playfair Display', "Hiragino Mincho ProN", "Yu Mincho
   margin: 0 0 36px;
   letter-spacing: 0.02em;
 }
+.series-overview-hint {
+  text-align: center;
+  font-family: 'Raleway', sans-serif;
+  font-size: 12px;
+  color: var(--ink-mute);
+  margin: 0 0 28px;
+  letter-spacing: 0.05em;
+}
 .series-overview-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 24px;
+  grid-template-columns: 1fr;
+  gap: 32px;
+  max-width: 900px;
+  margin: 0 auto;
 }
 .series-overview-card {
   background: #fff;
   border: 1px solid var(--line);
-  padding: 24px;
-  text-decoration: none;
-  color: var(--ink);
-  display: flex;
-  flex-direction: column;
-  transition: box-shadow 0.25s, transform 0.25s, border-color 0.25s;
+  padding: 28px;
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 28px;
+  align-items: center;
+  transition: box-shadow 0.25s, border-color 0.25s;
 }
 .series-overview-card:hover {
-  box-shadow: 0 10px 28px rgba(0,0,0,0.08);
-  transform: translateY(-3px);
+  box-shadow: 0 10px 28px rgba(0,0,0,0.07);
   border-color: var(--accent);
 }
 .series-thumbs {
   display: flex;
-  gap: 6px;
-  margin-bottom: 16px;
+  gap: 8px;
   justify-content: center;
+  align-items: flex-end;
+}
+.series-thumbs a {
+  flex: 1;
+  display: block;
+  text-decoration: none;
+  transition: transform 0.2s;
+}
+.series-thumbs a:hover {
+  transform: translateY(-4px);
 }
 .series-thumbs img {
-  width: 32%;
+  width: 100%;
   aspect-ratio: 2 / 3;
   object-fit: cover;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+  box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+  display: block;
+}
+.series-thumbs.thumbs-1 { max-width: 50%; margin: 0 auto; }
+.series-thumbs.thumbs-2 { max-width: 70%; margin: 0 auto; }
+.thumb-text {
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  background: linear-gradient(135deg, #e8e6e6 0%, #c4c4c4 100%);
+  display: flex; align-items: center; justify-content: center;
+  padding: 12px; text-align: center;
+  color: var(--ink); font-size: 12px;
+  font-family: 'Playfair Display', "Hiragino Mincho ProN", serif;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+}
+.series-overview-meta {
+  display: flex;
+  flex-direction: column;
 }
 .series-overview-num {
   font-family: 'Playfair Display', serif;
   font-style: italic;
-  font-size: 12px;
+  font-size: 13px;
   letter-spacing: 0.15em;
   color: var(--accent);
-  margin-bottom: 6px;
-  text-align: center;
+  margin-bottom: 8px;
 }
 .series-overview-title {
   font-family: 'Playfair Display', "Hiragino Mincho ProN", "Yu Mincho", serif;
-  font-size: 18px;
-  margin: 0 0 10px;
+  font-size: 22px;
+  margin: 0 0 12px;
   font-weight: 500;
-  text-align: center;
-  line-height: 1.4;
+  line-height: 1.35;
 }
 .series-overview-concept {
   font-family: 'Raleway', sans-serif;
-  font-size: 13px;
+  font-size: 14px;
   color: var(--ink-soft);
-  line-height: 1.7;
-  margin: 0 0 14px;
-  flex: 1;
+  line-height: 1.75;
+  margin: 0 0 16px;
 }
 .series-overview-count {
   font-family: 'Raleway', sans-serif;
-  font-size: 11px;
+  font-size: 12px;
   color: var(--ink-mute);
   letter-spacing: 0.1em;
-  text-align: center;
-  padding-top: 12px;
+  padding-top: 14px;
   border-top: 1px solid var(--line);
 }
 
@@ -189,106 +218,6 @@ h1, h2, h3 { font-family: 'Playfair Display', "Hiragino Mincho ProN", "Yu Mincho
 .series-nav a:hover { border-color: var(--accent); }
 .series-nav .count { color: var(--ink-mute); font-size: 11px; margin-left: 4px; }
 
-.series-section { padding: 70px 0 40px; border-bottom: 1px solid var(--line); }
-.series-section:last-of-type { border-bottom: none; }
-.series-header { text-align: center; margin-bottom: 36px; }
-.series-num {
-  display: inline-block;
-  font-family: 'Playfair Display', serif;
-  font-style: italic;
-  font-size: 14px;
-  letter-spacing: 0.15em;
-  color: var(--accent);
-  margin-bottom: 8px;
-}
-.series-title { font-size: 28px; margin: 0 0 12px; letter-spacing: 0.01em; }
-.series-concept {
-  color: var(--ink-soft);
-  max-width: 620px;
-  margin: 0 auto;
-  font-size: 14px;
-  line-height: 1.79;
-}
-
-.books-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; margin-top: 28px; }
-.books-grid.cols-2 { grid-template-columns: repeat(2, 1fr); max-width: 720px; margin-left: auto; margin-right: auto; }
-.books-grid.cols-1 { grid-template-columns: 1fr; max-width: 360px; margin-left: auto; margin-right: auto; }
-
-.book-card {
-  background: #fff;
-  border: 1px solid var(--line);
-  padding: 22px;
-  display: flex; flex-direction: column;
-  transition: box-shadow 0.25s, transform 0.25s;
-}
-.book-card:hover {
-  box-shadow: 0 10px 28px rgba(0,0,0,0.07);
-  transform: translateY(-3px);
-}
-.cover {
-  aspect-ratio: 2 / 3;
-  background: linear-gradient(135deg, #e8e6e6 0%, #c4c4c4 100%);
-  margin-bottom: 16px;
-  display: flex; align-items: center; justify-content: center;
-  padding: 16px; text-align: center;
-  color: var(--ink); font-size: 13px; line-height: 1.5;
-  font-family: 'Playfair Display', "Hiragino Mincho ProN", serif;
-  overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-}
-.cover.has-image {
-  background: #fff;
-  padding: 0;
-}
-.cover img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.cover.lncrna  { background: linear-gradient(135deg, #dce6ec 0%, #8ba8b8 100%); color: #1a1a1a; }
-.cover.device  { background: linear-gradient(135deg, #1a3050 0%, #4a6890 100%); color: #fff; }
-.cover.ai      { background: linear-gradient(135deg, #f0eadc 0%, #c4b288 100%); color: #1a1a1a; }
-.cover.science { background: linear-gradient(135deg, #e8dcdc 0%, #b08888 100%); color: #1a1a1a; }
-.cover.career  { background: linear-gradient(135deg, #dce8dc 0%, #8bb08b 100%); color: #1a1a1a; }
-.cover.health  { background: linear-gradient(135deg, #f0dce6 0%, #c488a8 100%); color: #1a1a1a; }
-.cover.en      { background: linear-gradient(135deg, #080808 0%, #4d4d4d 100%); color: #fff; font-style: italic; letter-spacing: 0.03em; }
-
-.badges { display: flex; gap: 5px; margin-bottom: 8px; flex-wrap: wrap; }
-.badge {
-  font-family: 'Raleway', sans-serif;
-  font-size: 10px; padding: 2px 7px;
-  letter-spacing: 0.08em; font-weight: 500;
-}
-.badge.new { background: var(--new); color: #fff; }
-.badge.paperback { background: var(--paperback); color: #fff; }
-.badge.review { background: #c89a00; color: #fff; }
-
-.book-title {
-  font-family: 'Playfair Display', "Hiragino Mincho ProN", "Yu Mincho", serif;
-  font-size: 16px; line-height: 1.5;
-  margin: 0 0 6px; font-weight: 500;
-}
-.book-subtitle {
-  font-family: 'Raleway', sans-serif;
-  font-size: 12px; color: var(--ink-soft);
-  margin: 0 0 10px; line-height: 1.6;
-}
-.book-meta {
-  font-family: 'Raleway', sans-serif;
-  font-size: 11px; color: var(--ink-mute);
-  margin-bottom: 14px; margin-top: auto;
-  letter-spacing: 0.04em;
-}
-.book-actions { display: flex; flex-direction: column; gap: 6px; }
-.btn {
-  display: block; text-align: center;
-  padding: 8px 12px; text-decoration: none;
-  font-family: 'Raleway', sans-serif;
-  font-size: 12px; font-weight: 500;
-  letter-spacing: 0.05em;
-  border: 1px solid var(--accent); color: var(--accent);
-  transition: all 0.2s;
-}
-.btn:hover { background: var(--accent); color: #fff; }
-.btn.primary { background: var(--accent); color: #fff; }
-.btn.primary:hover { background: var(--accent-soft); border-color: var(--accent-soft); }
-
 .footer-cta {
   padding: 80px 24px;
   background: var(--paper);
@@ -310,9 +239,10 @@ h1, h2, h3 { font-family: 'Playfair Display', "Hiragino Mincho ProN", "Yu Mincho
   .hero { padding: 60px 24px 40px; }
   .hero h1 { font-size: 36px; }
   .hero .sub-en { font-size: 16px; }
-  .series-overview-grid, .books-grid, .books-grid.cols-2 { grid-template-columns: 1fr; max-width: 360px; margin-left: auto; margin-right: auto; }
-  .series-section { padding: 50px 0 30px; }
-  .section-title, .series-title { font-size: 22px; }
+  .series-overview-card { grid-template-columns: 1fr; gap: 20px; padding: 22px; }
+  .series-thumbs { max-width: 70%; margin: 0 auto; }
+  .section-title { font-size: 22px; }
+  .series-overview-title { font-size: 18px; }
 }
 </style>
 </head>
@@ -342,288 +272,61 @@ h1, h2, h3 { font-family: 'Playfair Display', "Hiragino Mincho ProN", "Yu Mincho
   <div class="wrap">
     <div class="section-label">ALL SERIES</div>
     <h2 class="section-title">シリーズ一覧</h2>
+    <p class="series-overview-hint">表紙をクリックすると Amazon のページが開きます</p>
     <div class="series-overview-grid">
       
-      <a href="#s1" class="series-overview-card">
-        <div class="series-thumbs"><img src="covers/rnarna-67bf1b4b.jpg" alt=""><img src="covers/rnamrna-6c7377eb.jpg" alt=""><img src="covers/rna-b44a89d9.jpg" alt=""></div>
-        <div class="series-overview-num">SERIES 01</div>
-        <h3 class="series-overview-title">lncRNA・分子生物学シリーズ</h3>
-        <p class="series-overview-concept">タンパク質を作らないRNAが拓く新しい医療と生命像。研究現場からの最前線レポート。</p>
-        <div class="series-overview-count">全3冊</div>
-      </a>
-      <a href="#s2" class="series-overview-card">
-        <div class="series-thumbs"><img src="covers/16-bd9dddf0.jpg" alt=""><img src="covers/aiclaude-2d253260.jpg" alt=""><img src="covers/book-4559489d.jpg" alt=""></div>
-        <div class="series-overview-num">SERIES 02</div>
-        <h3 class="series-overview-title">装置運用世代シリーズ</h3>
-        <p class="series-overview-concept">「意志」ではなく「装置」で生きる——HSP研究者がAI時代に編み出した、中年期サバイバル術。</p>
-        <div class="series-overview-count">全3冊</div>
-      </a>
-      <a href="#s3" class="series-overview-card">
-        <div class="series-thumbs"><img src="covers/wetaidry-00c2fdb4.jpg" alt=""><img src="covers/ai-ad90cc09.jpg" alt=""><img src="covers/hspai-c63be800.jpg" alt=""></div>
-        <div class="series-overview-num">SERIES 03</div>
-        <h3 class="series-overview-title">AI × 研究シリーズ</h3>
-        <p class="series-overview-concept">生成AIを「考える相棒」として使うための、研究者発の実践ノウハウ。</p>
-        <div class="series-overview-count">全3冊</div>
-      </a>
-      <a href="#s4" class="series-overview-card">
-        <div class="series-thumbs"><img src="covers/book-0dd5ba81.jpg" alt=""><img src="covers/8-5acd5caa.jpg" alt=""></div>
-        <div class="series-overview-num">SERIES 04</div>
-        <h3 class="series-overview-title">科学史シリーズ</h3>
-        <p class="series-overview-concept">ノーベル賞の光と影。受賞者と「逃した天才たち」の両側から、科学の発展史を描く。</p>
-        <div class="series-overview-count">全2冊</div>
-      </a>
-      <a href="#s5" class="series-overview-card">
-        <div class="series-thumbs"><img src="covers/book-87f9b4f6.jpg" alt=""><img src="covers/7-12c00b0d.jpg" alt=""></div>
-        <div class="series-overview-num">SERIES 05</div>
-        <h3 class="series-overview-title">研究者キャリアシリーズ</h3>
-        <p class="series-overview-concept">アカデミアで生き残るための、地に足のついた実装ガイド。</p>
-        <div class="series-overview-count">全2冊</div>
-      </a>
-      <a href="#s6" class="series-overview-card">
-        <div class="series-thumbs"><img src="covers/book-da5a36fb.jpg" alt=""><img src="covers/book-727d9e56.jpg" alt=""></div>
-        <div class="series-overview-num">SERIES 06</div>
-        <h3 class="series-overview-title">健康・分子生物学シリーズ</h3>
-        <p class="series-overview-concept">薬学部教員が分子レベルで読み解く、日常の健康と美容。</p>
-        <div class="series-overview-count">全2冊</div>
-      </a>
-    </div>
-  </div>
-</section>
-
-
-<nav class="series-nav">
-  <div class="series-nav-inner">
-    <a href="#s1">01 lncRNA・分子生物学シリーズ<span class="count">(3)</span></a><a href="#s2">02 装置運用世代シリーズ<span class="count">(3)</span></a><a href="#s3">03 AI × 研究シリーズ<span class="count">(3)</span></a><a href="#s4">04 科学史シリーズ<span class="count">(2)</span></a><a href="#s5">05 研究者キャリアシリーズ<span class="count">(2)</span></a><a href="#s6">06 健康・分子生物学シリーズ<span class="count">(2)</span></a>
-  </div>
-</nav>
-
-
-<section class="series-section" id="s1">
-  <div class="wrap">
-    <div class="series-header">
-      <div class="series-num">SERIES 01</div>
-      <h2 class="series-title">lncRNA・分子生物学シリーズ</h2>
-      <p class="series-concept">タンパク質を作らないRNAが拓く新しい医療と生命像。研究現場からの最前線レポート。</p>
-    </div>
-    <div class="books-grid">
-      
-      <article class="book-card">
-        <div class="cover has-image"><img src="covers/rnarna-67bf1b4b.jpg" alt="長鎖ノンコーディングRNAが織りなす生体分子ネットワーク: タンパク質を作らないRNAが紡ぐ細胞の神秘"></div>
-        
-        <h3 class="book-title">長鎖ノンコーディングRNAが織りなす生体分子ネットワーク</h3>
-        
-        <div class="book-meta">2025.04.01</div>
-        <div class="book-actions">
-          <a class="btn primary" href="https://www.amazon.co.jp/dp/B0F43LXJB4" target="_blank" rel="noopener">Kindleで読む</a>
+      <article class="series-overview-card">
+        <div class="series-thumbs thumbs-3"><a href="https://www.amazon.co.jp/dp/B0F43LXJB4" target="_blank" rel="noopener" title="長鎖ノンコーディングRNAが織りなす生体分子ネットワーク: タンパク質を作らないRNAが紡ぐ細胞の神秘"><img src="covers/rnarna-67bf1b4b.jpg" alt="長鎖ノンコーディングRNAが織りなす生体分子ネットワーク: タンパク質を作らないRNAが紡ぐ細胞の神秘"></a><a href="https://www.amazon.co.jp/dp/B0DJYLCF1R" target="_blank" rel="noopener" title="RNA創薬革命 - mRNAワクチンからがん治療薬まで: 医療の未来を切り開く革新的技術"><img src="covers/rnamrna-6c7377eb.jpg" alt="RNA創薬革命 - mRNAワクチンからがん治療薬まで: 医療の未来を切り開く革新的技術"></a><a href="https://www.amazon.co.jp/dp/B0DBSMC7MW" target="_blank" rel="noopener" title="隠されていた生命の指令書 - 長鎖ノンコーディングRNA: ゲノムの暗号を解読した分子革命"><img src="covers/rna-b44a89d9.jpg" alt="隠されていた生命の指令書 - 長鎖ノンコーディングRNA: ゲノムの暗号を解読した分子革命"></a></div>
+        <div class="series-overview-meta">
+          <div class="series-overview-num">SERIES 01</div>
+          <h3 class="series-overview-title">lncRNA・分子生物学シリーズ</h3>
+          <p class="series-overview-concept">タンパク質を作らないRNAが拓く新しい医療と生命像。研究現場からの最前線レポート。</p>
+          <div class="series-overview-count">全3冊</div>
         </div>
       </article>
-
-      <article class="book-card">
-        <div class="cover has-image"><img src="covers/rnamrna-6c7377eb.jpg" alt="RNA創薬革命 - mRNAワクチンからがん治療薬まで: 医療の未来を切り開く革新的技術"></div>
-        
-        <h3 class="book-title">RNA創薬革命 - mRNAワクチンからがん治療薬まで</h3>
-        
-        <div class="book-meta">2024.10.01</div>
-        <div class="book-actions">
-          <a class="btn primary" href="https://www.amazon.co.jp/dp/B0DJYLCF1R" target="_blank" rel="noopener">Kindleで読む</a>
+      <article class="series-overview-card">
+        <div class="series-thumbs thumbs-3"><a href="https://www.amazon.co.jp/dp/B0GZJF83SV" target="_blank" rel="noopener" title="心の中の評議会: ミッドライフの暗闇に灯す16の対話"><img src="covers/16-bd9dddf0.jpg" alt="心の中の評議会: ミッドライフの暗闇に灯す16の対話"></a><a href="https://www.amazon.co.jp/dp/B0GZCPDL6V" target="_blank" rel="noopener" title="AI時代の脳疲労マネジメント: 装置運用世代のClaude Code術"><img src="covers/aiclaude-2d253260.jpg" alt="AI時代の脳疲労マネジメント: 装置運用世代のClaude Code術"></a><a href="https://www.amazon.co.jp/dp/B0GX5L2GC2" target="_blank" rel="noopener" title="就職氷河期世代の生き延び方: 装置運用で生きる第３の道"><img src="covers/book-4559489d.jpg" alt="就職氷河期世代の生き延び方: 装置運用で生きる第３の道"></a></div>
+        <div class="series-overview-meta">
+          <div class="series-overview-num">SERIES 02</div>
+          <h3 class="series-overview-title">装置運用世代シリーズ</h3>
+          <p class="series-overview-concept">「意志」ではなく「装置」で生きる——HSP研究者がAI時代に編み出した、中年期サバイバル術。</p>
+          <div class="series-overview-count">全3冊</div>
         </div>
       </article>
-
-      <article class="book-card">
-        <div class="cover has-image"><img src="covers/rna-b44a89d9.jpg" alt="隠されていた生命の指令書 - 長鎖ノンコーディングRNA: ゲノムの暗号を解読した分子革命"></div>
-        
-        <h3 class="book-title">隠されていた生命の指令書 - 長鎖ノンコーディングRNA</h3>
-        
-        <div class="book-meta">2024.08.01</div>
-        <div class="book-actions">
-          <a class="btn primary" href="https://www.amazon.co.jp/dp/B0DBSMC7MW" target="_blank" rel="noopener">Kindleで読む</a>
+      <article class="series-overview-card">
+        <div class="series-thumbs thumbs-3"><a href="https://www.amazon.co.jp/dp/B0GX2WZ16Z" target="_blank" rel="noopener" title="Wet研究者のための生成AI×バイオインフォ入門: 対話だけでDry解析"><img src="covers/wetaidry-00c2fdb4.jpg" alt="Wet研究者のための生成AI×バイオインフォ入門: 対話だけでDry解析"></a><a href="https://www.amazon.co.jp/dp/B0F79TZYBH" target="_blank" rel="noopener" title="AI時代を生き抜く知的武装術: 科学の眼・心の知恵・学びの革命で人生を変える"><img src="covers/ai-ad90cc09.jpg" alt="AI時代を生き抜く知的武装術: 科学の眼・心の知恵・学びの革命で人生を変える"></a><a href="https://www.amazon.co.jp/dp/B0GWR38RBZ" target="_blank" rel="noopener" title="「考えすぎる脳」の取扱説明書: HSPの神経科学×AIジャーナリング実践"><img src="covers/hspai-c63be800.jpg" alt="「考えすぎる脳」の取扱説明書: HSPの神経科学×AIジャーナリング実践"></a></div>
+        <div class="series-overview-meta">
+          <div class="series-overview-num">SERIES 03</div>
+          <h3 class="series-overview-title">AI × 研究シリーズ</h3>
+          <p class="series-overview-concept">生成AIを「考える相棒」として使うための、研究者発の実践ノウハウ。</p>
+          <div class="series-overview-count">全3冊</div>
         </div>
       </article>
-    </div>
-  </div>
-</section>
-<section class="series-section" id="s2">
-  <div class="wrap">
-    <div class="series-header">
-      <div class="series-num">SERIES 02</div>
-      <h2 class="series-title">装置運用世代シリーズ</h2>
-      <p class="series-concept">「意志」ではなく「装置」で生きる——HSP研究者がAI時代に編み出した、中年期サバイバル術。</p>
-    </div>
-    <div class="books-grid">
-      
-      <article class="book-card">
-        <div class="cover has-image"><img src="covers/16-bd9dddf0.jpg" alt="心の中の評議会: ミッドライフの暗闇に灯す16の対話"></div>
-        <div class="badges"><span class="badge paperback">📖 紙版</span><span class="badge review">★5.0</span></div>
-        <h3 class="book-title">心の中の評議会</h3>
-        
-        <div class="book-meta">2026.05.01</div>
-        <div class="book-actions">
-          <a class="btn primary" href="https://www.amazon.co.jp/dp/B0GZJF83SV" target="_blank" rel="noopener">Kindleで読む</a>
+      <article class="series-overview-card">
+        <div class="series-thumbs thumbs-2"><a href="https://www.amazon.co.jp/dp/B0D6WRWMVW" target="_blank" rel="noopener" title="ノーベル賞を逃した天才たち: 光の届かなかった偉大な発見者たちの物語"><img src="covers/book-0dd5ba81.jpg" alt="ノーベル賞を逃した天才たち: 光の届かなかった偉大な発見者たちの物語"></a><a href="https://www.amazon.co.jp/dp/B0F6L766W4" target="_blank" rel="noopener" title="ノーベル賞に輝いた！生命の謎を解く8大発明: 偶然と執念が変えた人類の未来"><img src="covers/8-5acd5caa.jpg" alt="ノーベル賞に輝いた！生命の謎を解く8大発明: 偶然と執念が変えた人類の未来"></a></div>
+        <div class="series-overview-meta">
+          <div class="series-overview-num">SERIES 04</div>
+          <h3 class="series-overview-title">科学史シリーズ</h3>
+          <p class="series-overview-concept">ノーベル賞の光と影。受賞者と「逃した天才たち」の両側から、科学の発展史を描く。</p>
+          <div class="series-overview-count">全2冊</div>
         </div>
       </article>
-
-      <article class="book-card">
-        <div class="cover has-image"><img src="covers/aiclaude-2d253260.jpg" alt="AI時代の脳疲労マネジメント: 装置運用世代のClaude Code術"></div>
-        <div class="badges"><span class="badge paperback">📖 紙版</span></div>
-        <h3 class="book-title">AI時代の脳疲労マネジメント</h3>
-        
-        <div class="book-meta">2026.05.01</div>
-        <div class="book-actions">
-          <a class="btn primary" href="https://www.amazon.co.jp/dp/B0GZCPDL6V" target="_blank" rel="noopener">Kindleで読む</a>
+      <article class="series-overview-card">
+        <div class="series-thumbs thumbs-2"><a href="https://www.amazon.co.jp/dp/B0DBV8DB3L" target="_blank" rel="noopener" title="研究者として生き抜く全技術: スキル・キャリア・幸福を手に入れる"><img src="covers/book-87f9b4f6.jpg" alt="研究者として生き抜く全技術: スキル・キャリア・幸福を手に入れる"></a><a href="https://www.amazon.co.jp/dp/B0DBQCLHBH" target="_blank" rel="noopener" title="理系のための研究者・大学教員への道: アカデミアの扉を開く7つのステップ"><img src="covers/7-12c00b0d.jpg" alt="理系のための研究者・大学教員への道: アカデミアの扉を開く7つのステップ"></a></div>
+        <div class="series-overview-meta">
+          <div class="series-overview-num">SERIES 05</div>
+          <h3 class="series-overview-title">研究者キャリアシリーズ</h3>
+          <p class="series-overview-concept">アカデミアで生き残るための、地に足のついた実装ガイド。</p>
+          <div class="series-overview-count">全2冊</div>
         </div>
       </article>
-
-      <article class="book-card">
-        <div class="cover has-image"><img src="covers/book-4559489d.jpg" alt="就職氷河期世代の生き延び方: 装置運用で生きる第３の道"></div>
-        <div class="badges"><span class="badge paperback">📖 紙版</span></div>
-        <h3 class="book-title">就職氷河期世代の生き延び方</h3>
-        
-        <div class="book-meta">2026.05.01</div>
-        <div class="book-actions">
-          <a class="btn primary" href="https://www.amazon.co.jp/dp/B0GX5L2GC2" target="_blank" rel="noopener">Kindleで読む</a>
-        </div>
-      </article>
-    </div>
-  </div>
-</section>
-<section class="series-section" id="s3">
-  <div class="wrap">
-    <div class="series-header">
-      <div class="series-num">SERIES 03</div>
-      <h2 class="series-title">AI × 研究シリーズ</h2>
-      <p class="series-concept">生成AIを「考える相棒」として使うための、研究者発の実践ノウハウ。</p>
-    </div>
-    <div class="books-grid">
-      
-      <article class="book-card">
-        <div class="cover has-image"><img src="covers/wetaidry-00c2fdb4.jpg" alt="Wet研究者のための生成AI×バイオインフォ入門: 対話だけでDry解析"></div>
-        
-        <h3 class="book-title">Wet研究者のための生成AI×バイオインフォ入門</h3>
-        
-        <div class="book-meta">2026.05.01</div>
-        <div class="book-actions">
-          <a class="btn primary" href="https://www.amazon.co.jp/dp/B0GX2WZ16Z" target="_blank" rel="noopener">Kindleで読む</a>
-        </div>
-      </article>
-
-      <article class="book-card">
-        <div class="cover has-image"><img src="covers/ai-ad90cc09.jpg" alt="AI時代を生き抜く知的武装術: 科学の眼・心の知恵・学びの革命で人生を変える"></div>
-        <div class="badges"><span class="badge review">★5.0</span></div>
-        <h3 class="book-title">AI時代を生き抜く知的武装術</h3>
-        
-        <div class="book-meta">2026.04.01</div>
-        <div class="book-actions">
-          <a class="btn primary" href="https://www.amazon.co.jp/dp/B0F79TZYBH" target="_blank" rel="noopener">Kindleで読む</a>
-        </div>
-      </article>
-
-      <article class="book-card">
-        <div class="cover has-image"><img src="covers/hspai-c63be800.jpg" alt="「考えすぎる脳」の取扱説明書: HSPの神経科学×AIジャーナリング実践"></div>
-        
-        <h3 class="book-title">「考えすぎる脳」の取扱説明書</h3>
-        
-        <div class="book-meta">2026.04.01</div>
-        <div class="book-actions">
-          <a class="btn primary" href="https://www.amazon.co.jp/dp/B0GWR38RBZ" target="_blank" rel="noopener">Kindleで読む</a>
-        </div>
-      </article>
-    </div>
-  </div>
-</section>
-<section class="series-section" id="s4">
-  <div class="wrap">
-    <div class="series-header">
-      <div class="series-num">SERIES 04</div>
-      <h2 class="series-title">科学史シリーズ</h2>
-      <p class="series-concept">ノーベル賞の光と影。受賞者と「逃した天才たち」の両側から、科学の発展史を描く。</p>
-    </div>
-    <div class="books-grid cols-2">
-      
-      <article class="book-card">
-        <div class="cover has-image"><img src="covers/book-0dd5ba81.jpg" alt="ノーベル賞を逃した天才たち: 光の届かなかった偉大な発見者たちの物語"></div>
-        
-        <h3 class="book-title">ノーベル賞を逃した天才たち</h3>
-        
-        <div class="book-meta">2026.04.01</div>
-        <div class="book-actions">
-          <a class="btn primary" href="https://www.amazon.co.jp/dp/B0D6WRWMVW" target="_blank" rel="noopener">Kindleで読む</a>
-        </div>
-      </article>
-
-      <article class="book-card">
-        <div class="cover has-image"><img src="covers/8-5acd5caa.jpg" alt="ノーベル賞に輝いた！生命の謎を解く8大発明: 偶然と執念が変えた人類の未来"></div>
-        <div class="badges"><span class="badge review">★5.0</span></div>
-        <h3 class="book-title">ノーベル賞に輝いた！生命の謎を解く8大発明</h3>
-        
-        <div class="book-meta">2025.05.01</div>
-        <div class="book-actions">
-          <a class="btn primary" href="https://www.amazon.co.jp/dp/B0F6L766W4" target="_blank" rel="noopener">Kindleで読む</a>
-        </div>
-      </article>
-    </div>
-  </div>
-</section>
-<section class="series-section" id="s5">
-  <div class="wrap">
-    <div class="series-header">
-      <div class="series-num">SERIES 05</div>
-      <h2 class="series-title">研究者キャリアシリーズ</h2>
-      <p class="series-concept">アカデミアで生き残るための、地に足のついた実装ガイド。</p>
-    </div>
-    <div class="books-grid cols-2">
-      
-      <article class="book-card">
-        <div class="cover has-image"><img src="covers/book-87f9b4f6.jpg" alt="研究者として生き抜く全技術: スキル・キャリア・幸福を手に入れる"></div>
-        
-        <h3 class="book-title">研究者として生き抜く全技術</h3>
-        
-        <div class="book-meta">2026.04.01</div>
-        <div class="book-actions">
-          <a class="btn primary" href="https://www.amazon.co.jp/dp/B0DBV8DB3L" target="_blank" rel="noopener">Kindleで読む</a>
-        </div>
-      </article>
-
-      <article class="book-card">
-        <div class="cover has-image"><img src="covers/7-12c00b0d.jpg" alt="理系のための研究者・大学教員への道: アカデミアの扉を開く7つのステップ"></div>
-        
-        <h3 class="book-title">理系のための研究者・大学教員への道</h3>
-        
-        <div class="book-meta">2024.07.01</div>
-        <div class="book-actions">
-          <a class="btn primary" href="https://www.amazon.co.jp/dp/B0DBQCLHBH" target="_blank" rel="noopener">Kindleで読む</a>
-        </div>
-      </article>
-    </div>
-  </div>
-</section>
-<section class="series-section" id="s6">
-  <div class="wrap">
-    <div class="series-header">
-      <div class="series-num">SERIES 06</div>
-      <h2 class="series-title">健康・分子生物学シリーズ</h2>
-      <p class="series-concept">薬学部教員が分子レベルで読み解く、日常の健康と美容。</p>
-    </div>
-    <div class="books-grid cols-2">
-      
-      <article class="book-card">
-        <div class="cover has-image"><img src="covers/book-da5a36fb.jpg" alt="食べない力で健康になる: 現代人のための食生活"></div>
-        
-        <h3 class="book-title">食べない力で健康になる</h3>
-        
-        <div class="book-meta">2025.06.01</div>
-        <div class="book-actions">
-          <a class="btn primary" href="https://www.amazon.co.jp/dp/B0FDYXMLYG" target="_blank" rel="noopener">Kindleで読む</a>
-        </div>
-      </article>
-
-      <article class="book-card">
-        <div class="cover has-image"><img src="covers/book-727d9e56.jpg" alt="分子レベルでわかる！女性の美容と健康: 薬学部の大学教員が丁寧に解説 - 最新科学で輝く美しさの秘密"></div>
-        
-        <h3 class="book-title">分子レベルでわかる！女性の美容と健康</h3>
-        
-        <div class="book-meta">2025.03.01</div>
-        <div class="book-actions">
-          <a class="btn primary" href="https://www.amazon.co.jp/dp/B0DZGV4WSC" target="_blank" rel="noopener">Kindleで読む</a>
+      <article class="series-overview-card">
+        <div class="series-thumbs thumbs-2"><a href="https://www.amazon.co.jp/dp/B0FDYXMLYG" target="_blank" rel="noopener" title="食べない力で健康になる: 現代人のための食生活"><img src="covers/book-da5a36fb.jpg" alt="食べない力で健康になる: 現代人のための食生活"></a><a href="https://www.amazon.co.jp/dp/B0DZGV4WSC" target="_blank" rel="noopener" title="分子レベルでわかる！女性の美容と健康: 薬学部の大学教員が丁寧に解説 - 最新科学で輝く美しさの秘密"><img src="covers/book-727d9e56.jpg" alt="分子レベルでわかる！女性の美容と健康: 薬学部の大学教員が丁寧に解説 - 最新科学で輝く美しさの秘密"></a></div>
+        <div class="series-overview-meta">
+          <div class="series-overview-num">SERIES 06</div>
+          <h3 class="series-overview-title">健康・分子生物学シリーズ</h3>
+          <p class="series-overview-concept">薬学部教員が分子レベルで読み解く、日常の健康と美容。</p>
+          <div class="series-overview-count">全2冊</div>
         </div>
       </article>
     </div>
@@ -645,7 +348,7 @@ h1, h2, h3 { font-family: 'Playfair Display', "Hiragino Mincho ProN", "Yu Mincho
   </div>
 </section>
 
-<div class="footer-meta">Last updated: 2026-05-16 20:58</div>
+<div class="footer-meta">Last updated: 2026-05-16 21:14</div>
 
 </body>
 </html>

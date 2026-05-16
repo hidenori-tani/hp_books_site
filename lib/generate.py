@@ -13,15 +13,14 @@ GitHub Pages にデプロイ後、Wix HTML iframe ウィジェットから読み
 
 import glob
 import html
-import os
 import shutil
 import sys
-from datetime import datetime, timedelta
+from datetime import datetime
 from pathlib import Path
 
 import yaml
 
-from series_config import SERIES_CONFIG, STANDALONE_SECTION, PAPERBACK_MAP
+from series_config import SERIES_CONFIG
 
 # パス
 SCRIPT_DIR = Path(__file__).parent
@@ -30,9 +29,6 @@ BOOKS_DIR = SITE_ROOT.parent / "marketing" / "books"
 SOURCE_COVERS_DIR = SITE_ROOT.parent / "marketing" / "covers"
 OUTPUT_PATH = SITE_ROOT / "docs" / "index.html"
 COVERS_DIR = SITE_ROOT / "docs" / "covers"
-
-# 「新刊」判定: pub_date が今日から3ヶ月以内
-NEW_THRESHOLD = datetime.now() - timedelta(days=90)
 
 # 日本語のみ表示（英語シリーズと standalone は除外）
 EXCLUDE_LANG = "en"
@@ -91,20 +87,6 @@ def sync_covers(books):
     return copied
 
 
-def is_new(pub_date_str):
-    if not pub_date_str:
-        return False
-    try:
-        # YAML may parse as date or string
-        if isinstance(pub_date_str, str):
-            d = datetime.strptime(pub_date_str[:10], "%Y-%m-%d")
-        else:
-            d = datetime.combine(pub_date_str, datetime.min.time())
-        return d >= NEW_THRESHOLD
-    except (ValueError, TypeError):
-        return False
-
-
 def cover_url_or_none(slug):
     """docs/covers/<slug>.jpg があればそのパスを返す"""
     if not slug:
@@ -124,121 +106,8 @@ def amazon_url(asin, lang):
     return f"https://www.{domain}/dp/{asin}"
 
 
-def fmt_date(pub_date_str):
-    if not pub_date_str:
-        return ""
-    s = str(pub_date_str)[:10]
-    return s.replace("-", ".")
-
-
-def render_book_card(book, cover_class):
-    """1冊分のカードHTML"""
-    asin = book.get("asin", "")
-    title = book.get("title", "")
-    subtitle = book.get("subtitle", "") or ""
-    pub_date = book.get("pub_date", "")
-    rating = book.get("average_rating")
-    review_count = book.get("review_count", 0)
-
-    # シリーズ情報から言語判定
-    sid = book.get("series_id")
-    lang = "en"
-    if sid and sid in SERIES_CONFIG:
-        lang = SERIES_CONFIG[sid]["lang"]
-    elif sid is None:
-        # standalone — 英語の可能性が高いがタイトルから判定
-        lang = "en" if all(ord(c) < 128 for c in title[:20]) else "jp"
-
-    # カバー画像 or プレースホルダ
-    slug = book.get("slug")
-    cover_path = cover_url_or_none(slug)
-    if cover_path:
-        cover_html = f'<div class="cover has-image"><img src="{html.escape(cover_path)}" alt="{html.escape(title)}"></div>'
-    else:
-        # タイトルを2-3行に折って表示
-        display = title.split(":")[0].split("：")[0]
-        if len(display) > 16:
-            mid = len(display) // 2
-            display = display[:mid] + "<br>" + display[mid:]
-        cover_html = f'<div class="cover {cover_class}">{display}</div>'
-
-    # バッジ
-    badges = []
-    if asin in PAPERBACK_MAP:
-        badges.append('<span class="badge paperback">📖 ' + ("Paperback" if lang == "en" else "紙版") + "</span>")
-    if rating and review_count and review_count >= 1:
-        try:
-            r = float(rating)
-            if r >= 4.0:
-                badges.append(f'<span class="badge review">★{r:.1f}</span>')
-        except (ValueError, TypeError):
-            pass
-    badges_html = ""
-    if badges:
-        badges_html = '<div class="badges">' + "".join(badges) + "</div>"
-
-    # メタ
-    meta_parts = []
-    if pub_date:
-        meta_parts.append(fmt_date(pub_date))
-    if lang == "en":
-        meta_parts.append("English")
-    meta_html = " · ".join(meta_parts)
-
-    # アクション
-    btn_label_kindle = "Amazon (US)" if lang == "en" else "Kindleで読む"
-    btn_label_pb = "Paperback" if lang == "en" else "ペーパーバック"
-    actions = [f'<a class="btn primary" href="{amazon_url(asin, lang)}" target="_blank" rel="noopener">{btn_label_kindle}</a>']
-    pb_asin = PAPERBACK_MAP.get(asin)
-    if pb_asin:
-        actions.append(f'<a class="btn" href="{amazon_url(pb_asin, lang)}" target="_blank" rel="noopener">{btn_label_pb}</a>')
-
-    # サブタイトルが長すぎる場合の処理
-    subtitle_html = f'<p class="book-subtitle">{html.escape(subtitle)}</p>' if subtitle else ""
-
-    return f"""
-      <article class="book-card">
-        {cover_html}
-        {badges_html}
-        <h3 class="book-title">{html.escape(title.split(':')[0].split('：')[0])}</h3>
-        {subtitle_html}
-        <div class="book-meta">{html.escape(meta_html)}</div>
-        <div class="book-actions">
-          {''.join(actions)}
-        </div>
-      </article>"""
-
-
-def render_series_section(series_id, books, config, section_num):
-    """1シリーズ分のセクションHTML"""
-    n = len(books)
-    grid_class = "books-grid"
-    if n == 2:
-        grid_class += " cols-2"
-    elif n == 1:
-        grid_class += " cols-1"
-
-    # 新→古
-    sorted_books = sorted(books, key=lambda b: str(b.get("pub_date", "")), reverse=True)
-    cards = "\n".join(render_book_card(b, config["cover_class"]) for b in sorted_books)
-
-    return f"""
-<section class="series-section" id="s{section_num}">
-  <div class="wrap">
-    <div class="series-header">
-      <div class="series-num">SERIES {section_num:02d}</div>
-      <h2 class="series-title">{html.escape(config["display_name"])}</h2>
-      <p class="series-concept">{html.escape(config["concept"])}</p>
-    </div>
-    <div class="{grid_class}">
-      {cards}
-    </div>
-  </div>
-</section>"""
-
-
 def render_series_overview(series_groups):
-    """全シリーズ一覧（カード形式の目次）"""
+    """全シリーズ一覧（カード内に書籍カバー＋個別Amazonリンク）"""
     cards = []
     section_num = 1
     for sid, books in series_groups:
@@ -248,25 +117,41 @@ def render_series_overview(series_groups):
         if not config:
             continue
 
-        # シリーズの代表表紙3冊を取得（最新順）
+        # 出版日新→古の順
         sorted_books = sorted(books, key=lambda b: str(b.get("pub_date", "")), reverse=True)
+        # 表紙サムネを個別Amazonリンクとして配置
         thumbs = []
-        for b in sorted_books[:3]:
+        for b in sorted_books:
             cp = cover_url_or_none(b.get("slug"))
+            asin = b.get("asin", "")
+            title = b.get("title", "")
+            url = amazon_url(asin, config.get("lang", "jp"))
             if cp:
-                thumbs.append(f'<img src="{html.escape(cp)}" alt="">')
-        thumbs_html = ""
-        if thumbs:
-            thumbs_html = f'<div class="series-thumbs">{"".join(thumbs)}</div>'
+                thumbs.append(
+                    f'<a href="{url}" target="_blank" rel="noopener" title="{html.escape(title)}">'
+                    f'<img src="{html.escape(cp)}" alt="{html.escape(title)}"></a>'
+                )
+            else:
+                # フォールバック: タイトル文字
+                short = title.split(":")[0].split("：")[0][:20]
+                thumbs.append(
+                    f'<a href="{url}" target="_blank" rel="noopener" title="{html.escape(title)}" class="thumb-text">'
+                    f'<span>{html.escape(short)}</span></a>'
+                )
+        # 1冊・2冊・3冊+ で並びを変える
+        thumb_count_class = f"thumbs-{min(len(thumbs), 3)}"
+        thumbs_html = f'<div class="series-thumbs {thumb_count_class}">{"".join(thumbs)}</div>'
 
         cards.append(f"""
-      <a href="#s{section_num}" class="series-overview-card">
+      <article class="series-overview-card">
         {thumbs_html}
-        <div class="series-overview-num">SERIES {section_num:02d}</div>
-        <h3 class="series-overview-title">{html.escape(config["display_name"])}</h3>
-        <p class="series-overview-concept">{html.escape(config["concept"])}</p>
-        <div class="series-overview-count">全{len(books)}冊</div>
-      </a>""")
+        <div class="series-overview-meta">
+          <div class="series-overview-num">SERIES {section_num:02d}</div>
+          <h3 class="series-overview-title">{html.escape(config["display_name"])}</h3>
+          <p class="series-overview-concept">{html.escape(config["concept"])}</p>
+          <div class="series-overview-count">全{len(books)}冊</div>
+        </div>
+      </article>""")
         section_num += 1
 
     if not cards:
@@ -276,34 +161,12 @@ def render_series_overview(series_groups):
   <div class="wrap">
     <div class="section-label">ALL SERIES</div>
     <h2 class="section-title">シリーズ一覧</h2>
+    <p class="series-overview-hint">表紙をクリックすると Amazon のページが開きます</p>
     <div class="series-overview-grid">
       {''.join(cards)}
     </div>
   </div>
 </section>"""
-
-
-def render_nav(series_groups):
-    """シリーズナビゲーション"""
-    items = []
-    section_num = 1
-    for sid, books in series_groups:
-        if sid is None:
-            continue
-        config = SERIES_CONFIG.get(sid)
-        if not config:
-            continue
-        name = config["display_name"]
-        items.append(
-            f'<a href="#s{section_num}">{section_num:02d} {html.escape(name)}<span class="count">({len(books)})</span></a>'
-        )
-        section_num += 1
-    return f"""
-<nav class="series-nav">
-  <div class="series-nav-inner">
-    {''.join(items)}
-  </div>
-</nav>"""
 
 
 CSS = """
@@ -320,8 +183,6 @@ CSS = """
   --accent: #0057E1;
   --accent-soft: #4a85ea;
   --line: #e8e6e6;
-  --new: #c0392b;
-  --paperback: #7a6a4a;
 }
 * { box-sizing: border-box; }
 body {
@@ -402,70 +263,101 @@ h1, h2, h3 { font-family: 'Playfair Display', "Hiragino Mincho ProN", "Yu Mincho
   margin: 0 0 36px;
   letter-spacing: 0.02em;
 }
+.series-overview-hint {
+  text-align: center;
+  font-family: 'Raleway', sans-serif;
+  font-size: 12px;
+  color: var(--ink-mute);
+  margin: 0 0 28px;
+  letter-spacing: 0.05em;
+}
 .series-overview-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 24px;
+  grid-template-columns: 1fr;
+  gap: 32px;
+  max-width: 900px;
+  margin: 0 auto;
 }
 .series-overview-card {
   background: #fff;
   border: 1px solid var(--line);
-  padding: 24px;
-  text-decoration: none;
-  color: var(--ink);
-  display: flex;
-  flex-direction: column;
-  transition: box-shadow 0.25s, transform 0.25s, border-color 0.25s;
+  padding: 28px;
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 28px;
+  align-items: center;
+  transition: box-shadow 0.25s, border-color 0.25s;
 }
 .series-overview-card:hover {
-  box-shadow: 0 10px 28px rgba(0,0,0,0.08);
-  transform: translateY(-3px);
+  box-shadow: 0 10px 28px rgba(0,0,0,0.07);
   border-color: var(--accent);
 }
 .series-thumbs {
   display: flex;
-  gap: 6px;
-  margin-bottom: 16px;
+  gap: 8px;
   justify-content: center;
+  align-items: flex-end;
+}
+.series-thumbs a {
+  flex: 1;
+  display: block;
+  text-decoration: none;
+  transition: transform 0.2s;
+}
+.series-thumbs a:hover {
+  transform: translateY(-4px);
 }
 .series-thumbs img {
-  width: 32%;
+  width: 100%;
   aspect-ratio: 2 / 3;
   object-fit: cover;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+  box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+  display: block;
+}
+.series-thumbs.thumbs-1 { max-width: 50%; margin: 0 auto; }
+.series-thumbs.thumbs-2 { max-width: 70%; margin: 0 auto; }
+.thumb-text {
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  background: linear-gradient(135deg, #e8e6e6 0%, #c4c4c4 100%);
+  display: flex; align-items: center; justify-content: center;
+  padding: 12px; text-align: center;
+  color: var(--ink); font-size: 12px;
+  font-family: 'Playfair Display', "Hiragino Mincho ProN", serif;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+}
+.series-overview-meta {
+  display: flex;
+  flex-direction: column;
 }
 .series-overview-num {
   font-family: 'Playfair Display', serif;
   font-style: italic;
-  font-size: 12px;
+  font-size: 13px;
   letter-spacing: 0.15em;
   color: var(--accent);
-  margin-bottom: 6px;
-  text-align: center;
+  margin-bottom: 8px;
 }
 .series-overview-title {
   font-family: 'Playfair Display', "Hiragino Mincho ProN", "Yu Mincho", serif;
-  font-size: 18px;
-  margin: 0 0 10px;
+  font-size: 22px;
+  margin: 0 0 12px;
   font-weight: 500;
-  text-align: center;
-  line-height: 1.4;
+  line-height: 1.35;
 }
 .series-overview-concept {
   font-family: 'Raleway', sans-serif;
-  font-size: 13px;
+  font-size: 14px;
   color: var(--ink-soft);
-  line-height: 1.7;
-  margin: 0 0 14px;
-  flex: 1;
+  line-height: 1.75;
+  margin: 0 0 16px;
 }
 .series-overview-count {
   font-family: 'Raleway', sans-serif;
-  font-size: 11px;
+  font-size: 12px;
   color: var(--ink-mute);
   letter-spacing: 0.1em;
-  text-align: center;
-  padding-top: 12px;
+  padding-top: 14px;
   border-top: 1px solid var(--line);
 }
 
@@ -490,106 +382,6 @@ h1, h2, h3 { font-family: 'Playfair Display', "Hiragino Mincho ProN", "Yu Mincho
 .series-nav a:hover { border-color: var(--accent); }
 .series-nav .count { color: var(--ink-mute); font-size: 11px; margin-left: 4px; }
 
-.series-section { padding: 70px 0 40px; border-bottom: 1px solid var(--line); }
-.series-section:last-of-type { border-bottom: none; }
-.series-header { text-align: center; margin-bottom: 36px; }
-.series-num {
-  display: inline-block;
-  font-family: 'Playfair Display', serif;
-  font-style: italic;
-  font-size: 14px;
-  letter-spacing: 0.15em;
-  color: var(--accent);
-  margin-bottom: 8px;
-}
-.series-title { font-size: 28px; margin: 0 0 12px; letter-spacing: 0.01em; }
-.series-concept {
-  color: var(--ink-soft);
-  max-width: 620px;
-  margin: 0 auto;
-  font-size: 14px;
-  line-height: 1.79;
-}
-
-.books-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; margin-top: 28px; }
-.books-grid.cols-2 { grid-template-columns: repeat(2, 1fr); max-width: 720px; margin-left: auto; margin-right: auto; }
-.books-grid.cols-1 { grid-template-columns: 1fr; max-width: 360px; margin-left: auto; margin-right: auto; }
-
-.book-card {
-  background: #fff;
-  border: 1px solid var(--line);
-  padding: 22px;
-  display: flex; flex-direction: column;
-  transition: box-shadow 0.25s, transform 0.25s;
-}
-.book-card:hover {
-  box-shadow: 0 10px 28px rgba(0,0,0,0.07);
-  transform: translateY(-3px);
-}
-.cover {
-  aspect-ratio: 2 / 3;
-  background: linear-gradient(135deg, #e8e6e6 0%, #c4c4c4 100%);
-  margin-bottom: 16px;
-  display: flex; align-items: center; justify-content: center;
-  padding: 16px; text-align: center;
-  color: var(--ink); font-size: 13px; line-height: 1.5;
-  font-family: 'Playfair Display', "Hiragino Mincho ProN", serif;
-  overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-}
-.cover.has-image {
-  background: #fff;
-  padding: 0;
-}
-.cover img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.cover.lncrna  { background: linear-gradient(135deg, #dce6ec 0%, #8ba8b8 100%); color: #1a1a1a; }
-.cover.device  { background: linear-gradient(135deg, #1a3050 0%, #4a6890 100%); color: #fff; }
-.cover.ai      { background: linear-gradient(135deg, #f0eadc 0%, #c4b288 100%); color: #1a1a1a; }
-.cover.science { background: linear-gradient(135deg, #e8dcdc 0%, #b08888 100%); color: #1a1a1a; }
-.cover.career  { background: linear-gradient(135deg, #dce8dc 0%, #8bb08b 100%); color: #1a1a1a; }
-.cover.health  { background: linear-gradient(135deg, #f0dce6 0%, #c488a8 100%); color: #1a1a1a; }
-.cover.en      { background: linear-gradient(135deg, #080808 0%, #4d4d4d 100%); color: #fff; font-style: italic; letter-spacing: 0.03em; }
-
-.badges { display: flex; gap: 5px; margin-bottom: 8px; flex-wrap: wrap; }
-.badge {
-  font-family: 'Raleway', sans-serif;
-  font-size: 10px; padding: 2px 7px;
-  letter-spacing: 0.08em; font-weight: 500;
-}
-.badge.new { background: var(--new); color: #fff; }
-.badge.paperback { background: var(--paperback); color: #fff; }
-.badge.review { background: #c89a00; color: #fff; }
-
-.book-title {
-  font-family: 'Playfair Display', "Hiragino Mincho ProN", "Yu Mincho", serif;
-  font-size: 16px; line-height: 1.5;
-  margin: 0 0 6px; font-weight: 500;
-}
-.book-subtitle {
-  font-family: 'Raleway', sans-serif;
-  font-size: 12px; color: var(--ink-soft);
-  margin: 0 0 10px; line-height: 1.6;
-}
-.book-meta {
-  font-family: 'Raleway', sans-serif;
-  font-size: 11px; color: var(--ink-mute);
-  margin-bottom: 14px; margin-top: auto;
-  letter-spacing: 0.04em;
-}
-.book-actions { display: flex; flex-direction: column; gap: 6px; }
-.btn {
-  display: block; text-align: center;
-  padding: 8px 12px; text-decoration: none;
-  font-family: 'Raleway', sans-serif;
-  font-size: 12px; font-weight: 500;
-  letter-spacing: 0.05em;
-  border: 1px solid var(--accent); color: var(--accent);
-  transition: all 0.2s;
-}
-.btn:hover { background: var(--accent); color: #fff; }
-.btn.primary { background: var(--accent); color: #fff; }
-.btn.primary:hover { background: var(--accent-soft); border-color: var(--accent-soft); }
-
 .footer-cta {
   padding: 80px 24px;
   background: var(--paper);
@@ -611,9 +403,10 @@ h1, h2, h3 { font-family: 'Playfair Display', "Hiragino Mincho ProN", "Yu Mincho
   .hero { padding: 60px 24px 40px; }
   .hero h1 { font-size: 36px; }
   .hero .sub-en { font-size: 16px; }
-  .series-overview-grid, .books-grid, .books-grid.cols-2 { grid-template-columns: 1fr; max-width: 360px; margin-left: auto; margin-right: auto; }
-  .series-section { padding: 50px 0 30px; }
-  .section-title, .series-title { font-size: 22px; }
+  .series-overview-card { grid-template-columns: 1fr; gap: 20px; padding: 22px; }
+  .series-thumbs { max-width: 70%; margin: 0 auto; }
+  .section-title { font-size: 22px; }
+  .series-overview-title { font-size: 18px; }
 }
 """
 
@@ -640,20 +433,7 @@ def render_html(books):
     if standalone:
         series_groups.append((None, standalone))
 
-    # 各セクションを描画
-    sections_html = []
-    section_num = 1
-    for sid, slist in series_groups:
-        if sid is None:
-            config = STANDALONE_SECTION
-        else:
-            config = SERIES_CONFIG[sid]
-        sections_html.append(render_series_section(sid or "standalone", slist, config, section_num))
-        section_num += 1
-
     series_overview_html = render_series_overview(series_groups)
-    nav_html = render_nav(series_groups)
-
     total = len(books)
     generated = datetime.now().strftime("%Y-%m-%d %H:%M")
 
@@ -688,10 +468,6 @@ def render_html(books):
 </section>
 
 {series_overview_html}
-
-{nav_html}
-
-{''.join(sections_html)}
 
 <section class="footer-cta">
   <div class="wrap">
