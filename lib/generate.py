@@ -457,11 +457,11 @@ def render_html(books):
       現在 {total} 冊を執筆しています。
     </p>
     <div class="cta-row">
-      <a class="cta" href="https://www.amazon.co.jp/stores/author/B0DBNS3FZF" target="_blank" rel="noopener">
-        Amazon Author Central（日本語）
+      <a class="cta" href="https://www.amazon.co.jp/s?k=%E8%B0%B7%E8%8B%B1%E5%85%B8&i=stripbooks" target="_blank" rel="noopener">
+        Amazonで全著作を見る（日本語）
       </a>
-      <a class="cta outline" href="https://www.amazon.com/author/hidenoritani" target="_blank" rel="noopener">
-        Author Central (English)
+      <a class="cta outline" href="https://www.amazon.com/s?k=Hidenori+Tani&i=stripbooks" target="_blank" rel="noopener">
+        View all books on Amazon (English)
       </a>
     </div>
   </div>
@@ -472,12 +472,12 @@ def render_html(books):
 <section class="footer-cta">
   <div class="wrap">
     <h2>すべての著作を一覧で見る</h2>
-    <p>Amazon Author Central では、ペーパーバック版を含む全著作・著者プロフィールをご覧いただけます。</p>
+    <p>Amazonの著者検索ページから、ペーパーバック版を含む全著作をご覧いただけます。</p>
     <div class="cta-row">
-      <a class="cta" href="https://www.amazon.co.jp/stores/author/B0DBNS3FZF" target="_blank" rel="noopener">
+      <a class="cta" href="https://www.amazon.co.jp/s?k=%E8%B0%B7%E8%8B%B1%E5%85%B8&i=stripbooks" target="_blank" rel="noopener">
         日本語：amazon.co.jp
       </a>
-      <a class="cta outline" href="https://www.amazon.com/author/hidenoritani" target="_blank" rel="noopener">
+      <a class="cta outline" href="https://www.amazon.com/s?k=Hidenori+Tani&i=stripbooks" target="_blank" rel="noopener">
         English: amazon.com
       </a>
     </div>
