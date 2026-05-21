@@ -45,32 +45,45 @@ SERIES_CONFIG = {
         "lang": "jp",
     },
     # English series — hp_books_site の英語セクションに表示される
-    "device-generation-en": {
+    # The Device Generation は 9 冊あるため 3 サブシリーズに分割
+    "device-generation-manifesto-en": {
         "order": 7,
-        "display_name": "The Device Generation Series",
-        "concept": "Systems, not willpower — a midlife survival framework for sensitive thinkers, written by a Japanese researcher who learned it the hard way.",
+        "display_name": "The Device Generation — Manifesto & Memoir",
+        "concept": "The foundational vision behind systems-over-willpower, and the personal stories that shaped it.",
+        "lang": "en",
+    },
+    "device-generation-researcher-en": {
+        "order": 8,
+        "display_name": "The Device Generation — For Researchers",
+        "concept": "Mid-career survival manuals for scientists working at the Wet + Dry + AI intersection.",
+        "lang": "en",
+    },
+    "device-generation-sensitive-en": {
+        "order": 9,
+        "display_name": "The Device Generation — For Sensitive Thinkers",
+        "concept": "Body-brain operating manuals for HSPs navigating midlife, anxiety, and the AI era.",
         "lang": "en",
     },
     "lncrna-rna-therapeutics-en": {
-        "order": 8,
+        "order": 10,
         "display_name": "lncRNA & RNA Therapeutics Series",
         "concept": "An accessible guide to the RNA revolution — from hidden genome directives to the mRNA vaccines that ended a pandemic.",
         "lang": "en",
     },
     "ai-research-en": {
-        "order": 9,
+        "order": 11,
         "display_name": "AI for Researchers Series",
         "concept": "Practical AI workflows for wet-lab scientists, written by a researcher who turned ChatGPT and Claude into thinking partners.",
         "lang": "en",
     },
     "health-molecular-en": {
-        "order": 10,
+        "order": 12,
         "display_name": "Health & Molecular Biology Series",
         "concept": "A pharmacy professor explains the molecular biology behind everyday health — eating, beauty, and aging.",
         "lang": "en",
     },
     "science-history-en": {
-        "order": 11,
+        "order": 13,
         "display_name": "Science History Series",
         "concept": "Both sides of the Nobel — the celebrated breakthroughs, and the brilliant discoveries left behind in history's shadow.",
         "lang": "en",
