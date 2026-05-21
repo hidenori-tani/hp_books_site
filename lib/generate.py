@@ -30,12 +30,12 @@ SOURCE_COVERS_DIR = SITE_ROOT.parent / "covers"
 OUTPUT_PATH = SITE_ROOT / "docs" / "index.html"
 COVERS_DIR = SITE_ROOT / "docs" / "covers"
 
-# 日本語のみ表示（英語シリーズと standalone は除外）
-EXCLUDE_LANG = "en"
+# 日本語・英語両方のシリーズを表示（series_id 未設定の standalone は除外）
+# 個別フィルタは load_books() 内で処理
 
 
 def load_books():
-    """books/*.md を読み込み、販売中の日本語書籍のみ返す"""
+    """books/*.md を読み込み、販売中の書籍（日本語＋英語シリーズ）を返す"""
     books = []
     for md_path in sorted(glob.glob(str(BOOKS_DIR / "*.md"))):
         with open(md_path, encoding="utf-8") as f:
@@ -56,13 +56,13 @@ def load_books():
             continue
         if not fm.get("asin"):
             continue
-        # 英語シリーズ・standalone を除外
+        # series_id 未設定の standalone は除外
         sid = fm.get("series_id")
         if sid is None:
-            continue  # standalone は英語のみなのでスキップ
-        config = SERIES_CONFIG.get(sid)
-        if config and config.get("lang") == EXCLUDE_LANG:
             continue
+        config = SERIES_CONFIG.get(sid)
+        if not config:
+            continue  # 未登録 series_id は除外
         books.append(fm)
     return books
 
@@ -106,9 +106,46 @@ def amazon_url(asin, lang):
     return f"https://www.{domain}/dp/{asin}"
 
 
+def _render_series_card(config, books, section_num):
+    """1シリーズのカードを生成"""
+    sorted_books = sorted(books, key=lambda b: str(b.get("pub_date", "")), reverse=True)
+    thumbs = []
+    for b in sorted_books:
+        cp = cover_url_or_none(b.get("slug"))
+        asin = b.get("asin", "")
+        title = b.get("title", "")
+        url = amazon_url(asin, config.get("lang", "jp"))
+        if cp:
+            thumbs.append(
+                f'<a href="{url}" target="_blank" rel="noopener" title="{html.escape(title)}">'
+                f'<img src="{html.escape(cp)}" alt="{html.escape(title)}"></a>'
+            )
+        else:
+            short = title.split(":")[0].split("：")[0][:20]
+            thumbs.append(
+                f'<a href="{url}" target="_blank" rel="noopener" title="{html.escape(title)}" class="thumb-text">'
+                f'<span>{html.escape(short)}</span></a>'
+            )
+    thumb_count_class = f"thumbs-{min(len(thumbs), 3)}"
+    thumbs_html = f'<div class="series-thumbs {thumb_count_class}">{"".join(thumbs)}</div>'
+    count_label = f'全{len(books)}冊' if config.get("lang") != "en" else f'{len(books)} {"books" if len(books) != 1 else "book"}'
+
+    return f"""
+      <article class="series-overview-card">
+        {thumbs_html}
+        <div class="series-overview-meta">
+          <div class="series-overview-num">SERIES {section_num:02d}</div>
+          <h3 class="series-overview-title">{html.escape(config["display_name"])}</h3>
+          <p class="series-overview-concept">{html.escape(config["concept"])}</p>
+          <div class="series-overview-count">{count_label}</div>
+        </div>
+      </article>"""
+
+
 def render_series_overview(series_groups):
-    """全シリーズ一覧（カード内に書籍カバー＋個別Amazonリンク）"""
-    cards = []
+    """全シリーズ一覧（日本語・英語をセクションに分けて表示）"""
+    jp_cards = []
+    en_cards = []
     section_num = 1
     for sid, books in series_groups:
         if sid is None:
@@ -116,57 +153,44 @@ def render_series_overview(series_groups):
         config = SERIES_CONFIG.get(sid)
         if not config:
             continue
-
-        # 出版日新→古の順
-        sorted_books = sorted(books, key=lambda b: str(b.get("pub_date", "")), reverse=True)
-        # 表紙サムネを個別Amazonリンクとして配置
-        thumbs = []
-        for b in sorted_books:
-            cp = cover_url_or_none(b.get("slug"))
-            asin = b.get("asin", "")
-            title = b.get("title", "")
-            url = amazon_url(asin, config.get("lang", "jp"))
-            if cp:
-                thumbs.append(
-                    f'<a href="{url}" target="_blank" rel="noopener" title="{html.escape(title)}">'
-                    f'<img src="{html.escape(cp)}" alt="{html.escape(title)}"></a>'
-                )
-            else:
-                # フォールバック: タイトル文字
-                short = title.split(":")[0].split("：")[0][:20]
-                thumbs.append(
-                    f'<a href="{url}" target="_blank" rel="noopener" title="{html.escape(title)}" class="thumb-text">'
-                    f'<span>{html.escape(short)}</span></a>'
-                )
-        # 1冊・2冊・3冊+ で並びを変える
-        thumb_count_class = f"thumbs-{min(len(thumbs), 3)}"
-        thumbs_html = f'<div class="series-thumbs {thumb_count_class}">{"".join(thumbs)}</div>'
-
-        cards.append(f"""
-      <article class="series-overview-card">
-        {thumbs_html}
-        <div class="series-overview-meta">
-          <div class="series-overview-num">SERIES {section_num:02d}</div>
-          <h3 class="series-overview-title">{html.escape(config["display_name"])}</h3>
-          <p class="series-overview-concept">{html.escape(config["concept"])}</p>
-          <div class="series-overview-count">全{len(books)}冊</div>
-        </div>
-      </article>""")
+        card_html = _render_series_card(config, books, section_num)
+        if config.get("lang") == "en":
+            en_cards.append(card_html)
+        else:
+            jp_cards.append(card_html)
         section_num += 1
 
-    if not cards:
+    if not jp_cards and not en_cards:
         return ""
-    return f"""
+
+    sections = []
+    if jp_cards:
+        sections.append(f"""
 <section class="series-overview">
   <div class="wrap">
     <div class="section-label">ALL SERIES</div>
     <h2 class="section-title">シリーズ一覧</h2>
     <p class="series-overview-hint">表紙をクリックすると Amazon のページが開きます</p>
     <div class="series-overview-grid">
-      {''.join(cards)}
+      {''.join(jp_cards)}
     </div>
   </div>
-</section>"""
+</section>""")
+
+    if en_cards:
+        sections.append(f"""
+<section class="series-overview">
+  <div class="wrap">
+    <div class="section-label">ENGLISH EDITIONS</div>
+    <h2 class="section-title">English Books</h2>
+    <p class="series-overview-hint">Click a cover to open the Amazon.com page.</p>
+    <div class="series-overview-grid">
+      {''.join(en_cards)}
+    </div>
+  </div>
+</section>""")
+
+    return "\n".join(sections)
 
 
 CSS = """
@@ -493,7 +517,7 @@ def render_html(books):
 
 def main():
     books = load_books()
-    print(f"Loaded {len(books)} Japanese published books from {BOOKS_DIR}")
+    print(f"Loaded {len(books)} published books from {BOOKS_DIR}")
     copied = sync_covers(books)
     print(f"Synced {copied} cover image(s) to {COVERS_DIR}")
     html_out = render_html(books)
