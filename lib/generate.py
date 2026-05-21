@@ -25,8 +25,8 @@ from series_config import SERIES_CONFIG
 # パス
 SCRIPT_DIR = Path(__file__).parent
 SITE_ROOT = SCRIPT_DIR.parent
-BOOKS_DIR = SITE_ROOT.parent / "marketing" / "books"
-SOURCE_COVERS_DIR = SITE_ROOT.parent / "marketing" / "covers"
+BOOKS_DIR = SITE_ROOT.parent / "books"
+SOURCE_COVERS_DIR = SITE_ROOT.parent / "covers"
 OUTPUT_PATH = SITE_ROOT / "docs" / "index.html"
 COVERS_DIR = SITE_ROOT / "docs" / "covers"
 
@@ -457,11 +457,11 @@ def render_html(books):
       現在 {total} 冊を執筆しています。
     </p>
     <div class="cta-row">
-      <a class="cta" href="https://www.amazon.co.jp/s?k=%E8%B0%B7%E8%8B%B1%E5%85%B8&i=stripbooks" target="_blank" rel="noopener">
-        Amazonで全著作を見る（日本語）
+      <a class="cta" href="https://www.amazon.co.jp/stores/%E8%B0%B7%E8%8B%B1%E5%85%B8/author/B0DC528BF8" target="_blank" rel="noopener">
+        Amazon著者ページを見る（日本語）
       </a>
-      <a class="cta outline" href="https://www.amazon.com/s?k=Hidenori+Tani&i=stripbooks" target="_blank" rel="noopener">
-        View all books on Amazon (English)
+      <a class="cta outline" href="https://www.amazon.com/stores/%E8%B0%B7%E8%8B%B1%E5%85%B8/author/B0DC528BF8" target="_blank" rel="noopener">
+        View Amazon Author Page (English)
       </a>
     </div>
   </div>
@@ -474,11 +474,11 @@ def render_html(books):
     <h2>すべての著作を一覧で見る</h2>
     <p>Amazonの著者検索ページから、ペーパーバック版を含む全著作をご覧いただけます。</p>
     <div class="cta-row">
-      <a class="cta" href="https://www.amazon.co.jp/s?k=%E8%B0%B7%E8%8B%B1%E5%85%B8&i=stripbooks" target="_blank" rel="noopener">
-        日本語：amazon.co.jp
+      <a class="cta" href="https://www.amazon.co.jp/stores/%E8%B0%B7%E8%8B%B1%E5%85%B8/author/B0DC528BF8" target="_blank" rel="noopener">
+        日本語：amazon.co.jp 著者ページ
       </a>
-      <a class="cta outline" href="https://www.amazon.com/s?k=Hidenori+Tani&i=stripbooks" target="_blank" rel="noopener">
-        English: amazon.com
+      <a class="cta outline" href="https://www.amazon.com/stores/%E8%B0%B7%E8%8B%B1%E5%85%B8/author/B0DC528BF8" target="_blank" rel="noopener">
+        English: amazon.com Author Page
       </a>
     </div>
   </div>
