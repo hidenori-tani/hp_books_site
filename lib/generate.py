@@ -142,10 +142,28 @@ def _render_series_card(config, books, section_num):
       </article>"""
 
 
-def render_series_overview(series_groups):
-    """全シリーズ一覧（日本語・英語をセクションに分けて表示）"""
+def _render_flat_book_card(book):
+    """発売日順フラット表示の1冊カード"""
+    cp = cover_url_or_none(book.get("slug"))
+    asin = book.get("asin", "")
+    title = book.get("title", "")
+    url = amazon_url(asin, "en")
+    pub_date = str(book.get("pub_date", "") or "")
+    if cp:
+        img_html = f'<img src="{html.escape(cp)}" alt="{html.escape(title)}">'
+    else:
+        short = title.split(":")[0].split("：")[0][:24]
+        img_html = f'<div class="flat-thumb-text"><span>{html.escape(short)}</span></div>'
+    date_html = f'<div class="flat-book-date">{html.escape(pub_date)}</div>' if pub_date else ""
+    return (
+        f'<a class="flat-book-card" href="{url}" target="_blank" rel="noopener" '
+        f'title="{html.escape(title)}">{img_html}{date_html}</a>'
+    )
+
+
+def render_series_overview(series_groups, en_books_flat):
+    """JP はシリーズ別カード、EN は発売日順フラットタイムライン"""
     jp_cards = []
-    en_cards = []
     section_num = 1
     for sid, books in series_groups:
         if sid is None:
@@ -153,15 +171,11 @@ def render_series_overview(series_groups):
         config = SERIES_CONFIG.get(sid)
         if not config:
             continue
-        card_html = _render_series_card(config, books, section_num)
         if config.get("lang") == "en":
-            en_cards.append(card_html)
-        else:
-            jp_cards.append(card_html)
+            continue  # EN はフラット表示するためスキップ
+        card_html = _render_series_card(config, books, section_num)
+        jp_cards.append(card_html)
         section_num += 1
-
-    if not jp_cards and not en_cards:
-        return ""
 
     sections = []
     if jp_cards:
@@ -177,15 +191,16 @@ def render_series_overview(series_groups):
   </div>
 </section>""")
 
-    if en_cards:
+    if en_books_flat:
+        flat_cards = [_render_flat_book_card(b) for b in en_books_flat]
         sections.append(f"""
 <section class="series-overview">
   <div class="wrap">
     <div class="section-label">ENGLISH EDITIONS</div>
     <h2 class="section-title">English Books</h2>
-    <p class="series-overview-hint">Click a cover to open the Amazon.com page.</p>
-    <div class="series-overview-grid">
-      {''.join(en_cards)}
+    <p class="series-overview-hint">All {len(en_books_flat)} books in publication date order (newest first). Click any cover to open Amazon.com.</p>
+    <div class="flat-book-grid">
+      {''.join(flat_cards)}
     </div>
   </div>
 </section>""")
@@ -423,6 +438,46 @@ h1, h2, h3 { font-family: 'Playfair Display', "Hiragino Mincho ProN", "Yu Mincho
   letter-spacing: 0.05em;
 }
 
+.flat-book-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+.flat-book-card {
+  display: block;
+  text-decoration: none;
+  color: var(--ink);
+  transition: transform 0.2s;
+}
+.flat-book-card:hover { transform: translateY(-4px); }
+.flat-book-card img {
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+  display: block;
+}
+.flat-thumb-text {
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  background: linear-gradient(135deg, #e8e6e6 0%, #c4c4c4 100%);
+  display: flex; align-items: center; justify-content: center;
+  padding: 12px; text-align: center;
+  color: var(--ink); font-size: 12px;
+  font-family: 'Playfair Display', "Hiragino Mincho ProN", serif;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+}
+.flat-book-date {
+  font-family: 'Raleway', sans-serif;
+  font-size: 11px;
+  color: var(--ink-mute);
+  text-align: center;
+  margin-top: 8px;
+  letter-spacing: 0.05em;
+}
+
 @media (max-width: 720px) {
   .hero { padding: 60px 24px 40px; }
   .hero h1 { font-size: 36px; }
@@ -431,6 +486,7 @@ h1, h2, h3 { font-family: 'Playfair Display', "Hiragino Mincho ProN", "Yu Mincho
   .series-thumbs { max-width: 70%; margin: 0 auto; }
   .section-title { font-size: 22px; }
   .series-overview-title { font-size: 18px; }
+  .flat-book-grid { grid-template-columns: repeat(3, 1fr); gap: 14px; }
 }
 """
 
@@ -457,7 +513,14 @@ def render_html(books):
     if standalone:
         series_groups.append((None, standalone))
 
-    series_overview_html = render_series_overview(series_groups)
+    # English 全冊を発売日 desc でフラット化
+    en_books_flat = sorted(
+        [b for b in books if SERIES_CONFIG.get(b.get("series_id"), {}).get("lang") == "en"],
+        key=lambda b: str(b.get("pub_date", "")),
+        reverse=True,
+    )
+
+    series_overview_html = render_series_overview(series_groups, en_books_flat)
     total = len(books)
     generated = datetime.now().strftime("%Y-%m-%d %H:%M")
 
