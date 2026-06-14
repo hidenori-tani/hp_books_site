@@ -14,6 +14,18 @@ SERIES_CONFIG = {
         "concept": "タンパク質を作らないRNAが拓く新しい医療と生命像。研究現場からの最前線レポート。",
         "lang": "jp",
     },
+    "rna-trilogy-jp": {
+        "order": 1.5,
+        "display_name": "ＲＮＡ三部作（科学エッセイ）",
+        "concept": "生命の起源・寿命・修飾を物語る、研究者によるＲＮＡ三部作。一般読者に向けたサイエンス・ナラティブ。",
+        "lang": "jp",
+    },
+    "science-essay-jp": {
+        "order": 8.5,
+        "display_name": "科学エッセイ",
+        "concept": "分子生物学者が一つのものさしで生命を見なおす、知的興奮のサイエンス・エッセイ。",
+        "lang": "jp",
+    },
     # 装置運用世代シリーズ は 6 冊あるため英語版と対称に 3 サブシリーズに分割
     "souchi-unyou-sedai-manifesto-jp": {
         "order": 2,
