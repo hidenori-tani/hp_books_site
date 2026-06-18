@@ -142,6 +142,99 @@ def _render_series_card(config, books, section_num):
       </article>"""
 
 
+def render_optin():
+    """メール登録セクション。SITE_ROOT/optin_embed.html があれば表示、
+    無ければ何も出さない（MailerLite未設定の段階で壊れた空フォームを公開しないため）。"""
+    embed_path = SITE_ROOT / "optin_embed.html"
+    if not embed_path.exists():
+        return ""
+    embed = embed_path.read_text(encoding="utf-8").strip()
+    if not embed:
+        return ""
+    return f"""
+<section class="optin">
+  <div class="wrap">
+    <div class="section-label">FREE GUIDE</div>
+    <h2 class="section-title">RNA創薬の全体像マップを無料で</h2>
+    <p class="optin-lead">mRNA・miRNA・siRNA・ASO・アプタマーを「作らせる／抑える／狙う」の一枚に整理したPDF（A4・2ページ）。ご登録の方に、RNAと生命科学のやさしい解説や新刊のお知らせを、ときどきお届けします。</p>
+    <div class="optin-form">{embed}</div>
+  </div>
+</section>"""
+
+
+OPTIN_CSS = """
+.optin { padding: 56px 24px; background: #f5f8ff; border-top: 1px solid #e3e9f5; border-bottom: 1px solid #e3e9f5; }
+.optin .section-label { color: #0057E1; }
+.optin .optin-lead { max-width: 680px; margin: 14px auto 26px; text-align: center; line-height: 1.85; color: #333; font-size: 16px; }
+.optin .optin-form { max-width: 520px; margin: 0 auto; }
+.optin .optin-form input[type=email] { width: 100%; padding: 13px 15px; font-size: 16px; border: 1px solid #b9c4dd; border-radius: 8px; }
+.optin .optin-form button, .optin .optin-form input[type=submit] { background: #0057E1; color: #fff; border: 0; border-radius: 8px; padding: 13px 22px; font-size: 16px; cursor: pointer; }
+@media (max-width: 640px) { .optin { padding: 40px 20px; } }
+"""
+
+
+def review_url(asin, lang):
+    """ASIN → Amazon「レビューを書く」URL（lang=jp/en）"""
+    domain = "amazon.com" if lang == "en" else "amazon.co.jp"
+    return f"https://www.{domain}/review/create-review?asin={asin}"
+
+
+def render_review_cta(books):
+    """読者に正直なレビューをお願いするセクション。
+    Amazon規約準拠：特典・星数の限定なし。肯定も率直な意見も歓迎する姿勢で「正直な感想」を求める。
+    """
+    jp_items, en_items = [], []
+    for b in sorted(books, key=lambda x: str(x.get("pub_date", "")), reverse=True):
+        asin = b.get("asin", "")
+        if not asin:
+            continue
+        sid = b.get("series_id")
+        lang = SERIES_CONFIG.get(sid, {}).get("lang", "jp")
+        short = b.get("title", "").split(":")[0].split("：")[0]
+        item = (f'<li><a href="{review_url(asin, lang)}" target="_blank" rel="noopener">'
+                f'{html.escape(short)}</a></li>')
+        (en_items if lang == "en" else jp_items).append(item)
+
+    if not jp_items and not en_items:
+        return ""
+
+    blocks = []
+    if jp_items:
+        blocks.append(
+            '<div class="review-col"><h3 class="review-sub">日本語の著作</h3>'
+            f'<ul class="review-list">{"".join(jp_items)}</ul></div>'
+        )
+    if en_items:
+        blocks.append(
+            '<div class="review-col"><h3 class="review-sub">English titles</h3>'
+            f'<ul class="review-list">{"".join(en_items)}</ul></div>'
+        )
+
+    return f"""
+<section class="review-cta">
+  <div class="wrap">
+    <div class="section-label">REVIEWS</div>
+    <h2 class="section-title">読んでくださった方へ、ひとつだけお願いです</h2>
+    <p class="review-lead">どの本でも、お読みいただいた率直なご感想を Amazon にひとことだけ残していただけたら、とても励みになります。「ここが役に立った」も「ここはこう思う」も、どちらも歓迎です。あなたの一言が、これから同じ問いで本を探す次の誰かの道しるべになります。星の数よりも、感じたことそのものが何よりの参考になります。</p>
+    <div class="review-cols">{"".join(blocks)}</div>
+  </div>
+</section>"""
+
+
+REVIEW_CSS = """
+.review-cta { padding: 56px 24px; background: #fbfcff; border-top: 1px solid #e3e9f5; }
+.review-cta .section-label { color: #0057E1; }
+.review-cta .review-lead { max-width: 720px; margin: 14px auto 30px; text-align: center; line-height: 1.95; color: #333; font-size: 16px; }
+.review-cta .review-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; max-width: 920px; margin: 0 auto; }
+.review-cta .review-sub { font-size: 15px; color: #0057E1; margin: 0 0 10px; letter-spacing: .04em; }
+.review-cta .review-list { list-style: none; padding: 0; margin: 0; columns: 2; column-gap: 22px; }
+.review-cta .review-list li { margin: 0 0 8px; break-inside: avoid; font-size: 14px; line-height: 1.5; }
+.review-cta .review-list a { color: #1a2b4a; text-decoration: none; border-bottom: 1px solid #c9d6ee; }
+.review-cta .review-list a:hover { color: #0057E1; border-bottom-color: #0057E1; }
+@media (max-width: 720px) { .review-cta .review-cols { grid-template-columns: 1fr; gap: 20px; } .review-cta .review-list { columns: 1; } }
+"""
+
+
 def render_series_overview(series_groups):
     """全シリーズ一覧（日本語・英語をセクションに分けて表示）"""
     jp_cards = []
@@ -458,6 +551,8 @@ def render_html(books):
         series_groups.append((None, standalone))
 
     series_overview_html = render_series_overview(series_groups)
+    optin_html = render_optin()
+    review_cta_html = render_review_cta(books)
     total = len(books)
     generated = datetime.now().strftime("%Y-%m-%d %H:%M")
 
@@ -468,7 +563,9 @@ def render_html(books):
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>著書 / Books — 谷英典</title>
 <meta name="description" content="谷英典（横浜薬科大学准教授）の著書一覧。lncRNA研究、AI時代の研究者の働き方、装置運用世代シリーズなど{total}冊。">
-<style>{CSS}</style>
+<style>{CSS}
+{OPTIN_CSS}
+{REVIEW_CSS}</style>
 </head>
 <body>
 
@@ -490,8 +587,9 @@ def render_html(books):
     </div>
   </div>
 </section>
-
+{optin_html}
 {series_overview_html}
+{review_cta_html}
 
 <section class="footer-cta">
   <div class="wrap">
