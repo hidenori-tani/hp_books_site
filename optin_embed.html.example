@@ -1,0 +1,19 @@
+<!--
+  これは「ひな形」です。MailerLite の埋め込みフォームを使うには：
+
+  1. MailerLite で Forms > Embedded form を作成（コピーは marketing/email/optin_copy.md）
+  2. 「Embed code（HTML/JS）」をコピー
+  3. このフォルダに optin_embed.html という名前で保存し、中身をその Embed code に置き換える
+  4. python3 lib/generate.py を実行 → docs/index.html に登録セクションが出現
+  5. git add docs/ optin_embed.html && commit && push（または Claude に「HP更新して」と依頼）
+
+  optin_embed.html が無い／空の間は、登録セクションは表示されません
+  （壊れた空フォームを公開しないため）。
+
+  動作確認だけしたい場合は、下のような簡易フォームを optin_embed.html に入れてもよい：
+
+  <form action="（MailerLiteのフォームaction URL）" method="post">
+    <input type="email" name="fields[email]" placeholder="メールアドレス" required>
+    <button type="submit">マップを受け取る（無料）</button>
+  </form>
+-->
