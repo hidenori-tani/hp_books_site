@@ -120,6 +120,12 @@ SERIES_CONFIG = {
         "concept": "学生もチームもいない――AIを研究員・チームメンバーに雇い、一人で成果を出し続ける実践書。",
         "lang": "jp",
     },
+    "ai-literacy-jp": {
+        "order": 5.7,
+        "display_name": "AI時代の教養シリーズ",
+        "concept": "生成AIに使われる側から使いこなす側へ。批判的思考・情報リテラシー・科学の眼で、AI時代を主体的に生きるための教養書。",
+        "lang": "jp",
+    },
     "rna-essay-en": {
         "order": 12.5,
         "display_name": "RNA World Essays",
