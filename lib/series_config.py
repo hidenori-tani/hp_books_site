@@ -113,4 +113,23 @@ SERIES_CONFIG = {
         "concept": "Both sides of the Nobel — the celebrated breakthroughs, and the brilliant discoveries left behind in history's shadow.",
         "lang": "en",
     },
+    # 2026-07-10 追加: 新刊の新規シリーズ
+    "one-person-jp": {
+        "order": 5.5,
+        "display_name": "ひとり運用シリーズ",
+        "concept": "学生もチームもいない――AIを研究員・チームメンバーに雇い、一人で成果を出し続ける実践書。",
+        "lang": "jp",
+    },
+    "rna-essay-en": {
+        "order": 12.5,
+        "display_name": "RNA World Essays",
+        "concept": "Narrative science essays on RNA, life, and where the boundaries of the living blur — by an RNA researcher.",
+        "lang": "en",
+    },
+    "one-person-en": {
+        "order": 13.5,
+        "display_name": "The One-Person Series",
+        "concept": "How to hire AI as your research team and deliver results alone.",
+        "lang": "en",
+    },
 }
