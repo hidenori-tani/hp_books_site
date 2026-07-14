@@ -1,9 +1,13 @@
 # hp_books_site — hidenoritani.com 著書ページ自動生成
 
-`outreach-books/marketing/books/*.md` の 日本語15冊メタデータから、
-hidenoritani.com の **著書ページのみ** を自動生成し、Wix の iframe で表示するパイプライン。
+`outreach-books/marketing/books/*.md` の書籍メタデータから、
+hidenoritani.com の **著書ページ** を自動生成し、Wix の iframe で表示するパイプライン。
 
-**他ページ（ホーム/研究概要/研究業績/経歴/担当科目/連絡先/English）には一切触れない。**
+**日本語（`index.html`）と英語（`en.html`）の2ページ**を出力し、各ページ上部の言語トグルで相互に行き来できる。
+各シリーズ（カテゴリ）の表紙は**最大3冊まで**表示し、超過分は総数を併記して Amazon 著者ページへ誘導する。
+
+**Wixの他ページ（ホーム/研究概要/研究業績/経歴/担当科目/連絡先 等）のレイアウトには一切触れない**
+（このパイプラインが生成するのは著書一覧のHTML＝`index.html`／`en.html` のみ。Wixの英語ページとは別物）。
 
 ---
 
@@ -14,26 +18,29 @@ hidenoritani.com の **著書ページのみ** を自動生成し、Wix の ifra
             ↓
        /kindle-update-hp
             ↓
-   ┌──────────────────────────┐
-   │ lib/generate.py           │
-   │  - books/*.md 読み込み    │
-   │  - 9シリーズに分類        │
-   │  - docs/index.html 生成   │
-   └──────────────────────────┘
+   ┌────────────────────────────────────┐
+   │ lib/generate.py                     │
+   │  - books/*.md 読み込み              │
+   │  - 日英のシリーズ別に分類           │
+   │  - 各シリーズ(カテゴリ)表紙3冊まで  │
+   │  - docs/index.html (日本語) 生成    │
+   │  - docs/en.html   (英語)   生成     │
+   └────────────────────────────────────┘
             ↓
         git push origin main
             ↓
-   ┌──────────────────────────┐
-   │ GitHub Pages              │
-   │  https://hidenoritani.    │
-   │  github.io/hp_books_site/ │
-   └──────────────────────────┘
+   ┌────────────────────────────────────┐
+   │ GitHub Pages                        │
+   │  https://hidenori-tani.github.io/   │
+   │    hp_books_site/        … 日本語    │
+   │    hp_books_site/en.html … 英語      │
+   └────────────────────────────────────┘
             ↓
-   ┌──────────────────────────┐
-   │ Wix「著書」ページの       │
-   │ HTML iframe ウィジェット  │
-   │ （src=上記URL）           │
-   └──────────────────────────┘
+   ┌────────────────────────────────────┐
+   │ Wix「著書」ページの HTML iframe     │
+   │ （src=…/hp_books_site/ = 日本語）   │
+   │  ページ内の言語トグルで en.html へ  │
+   └────────────────────────────────────┘
             ↓
         hidenoritani.com/books に反映
 ```
@@ -50,9 +57,15 @@ hp_books_site/
 │   ├── generate.py              # HTML生成スクリプト
 │   └── series_config.py         # シリーズ表示設定（順序・名前・配色）
 └── docs/                        # ← GitHub Pages 公開ディレクトリ
-    ├── index.html               # 自動生成（手で編集しない）
-    └── covers/                  # （任意）表紙画像 <ASIN>.jpg を置くと自動表示
+    ├── index.html               # 日本語ページ（自動生成・手で編集しない）
+    ├── en.html                  # 英語ページ（自動生成・手で編集しない）
+    └── covers/                  # 表紙画像 <slug>.jpg（generate.py が自動同期）
 ```
+
+> **日英2ページと表示ルール**
+> - `index.html`＝日本語シリーズのみ／`en.html`＝英語シリーズのみ。`series_config.py` の各シリーズ `lang`（'jp'/'en'）で振り分ける。
+> - 各ページ上部の言語トグル（日本語 ↔ English）で相互リンク。hero・フッターにも相互リンクを配置。
+> - **各シリーズの表紙は最大3冊**（新しい順）。4冊以上は「全N冊（新着3冊を表示）」等と総数を併記。全著作は Amazon 著者ページへ誘導。
 
 ---
 
@@ -121,6 +134,8 @@ git push -u origin main
 
 **以降、Wix 側を触る必要は一切ありません。** すべて `/kindle-update-hp` で完結します。
 
+> **日英2ページの見せ方**：上記の1つの iframe は日本語（`index.html`）を表示し、ページ内の「English」トグルを押すと iframe 内で `en.html` に切り替わる。**Wix側の追加作業は不要**。英語ページに直接着地させたい場合のみ、Wixの英語ページに `…/hp_books_site/en.html` を指す2つ目の iframe を任意で設置する。各ページは分割で短くなったので、iframe の `height` は必要に応じて詰めてよい。
+
 ---
 
 ## カスタマイズ
@@ -171,7 +186,9 @@ PAPERBACK_MAP = {
 | `/kindle-update-hp` でcommit対象なし | books/*.md に変更がない。Amazon情報を最新化したい場合は `--fetch` を付ける |
 | GitHub Pages が404 | Settings → Pages で Source/Folder 設定を再確認。`/docs` 必須 |
 | Wix iframe が空白 | `https://<USER>.github.io/hp_books_site/` を直接ブラウザで開いて確認。CORS/HTTPS問題ではない（GitHub Pages はHTTPS） |
-| 表紙画像が出ない | `docs/covers/<ASIN>.jpg` のファイル名が ASIN と完全一致しているか確認 |
+| 表紙画像が出ない | `docs/covers/<slug>.jpg` のファイル名が slug と一致しているか確認（`covers/<slug>/kindle.jpg` から自動同期） |
+| 英語ページが 404 | URLは `…github.io/hp_books_site/en.html`。GitHub Pages 反映に1〜2分。ユーザー名は `hidenori-tani`（ハイフン有） |
+| 冊数が日英でズレる | シリーズ未登録（`series_id` 空）の本は非表示。`series_config.py` に登録済みか確認 |
 | iframe の高さが足りない | iframe の `height` を増やす（書籍数増加に応じて） |
 
 ---
