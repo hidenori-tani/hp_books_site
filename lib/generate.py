@@ -107,10 +107,11 @@ def amazon_url(asin, lang):
 
 
 def _render_series_card(config, books, section_num):
-    """1シリーズのカードを生成"""
+    """1シリーズ（カテゴリ）のカードを生成。表紙は最大3冊まで表示。"""
     sorted_books = sorted(books, key=lambda b: str(b.get("pub_date", "")), reverse=True)
+    display_books = sorted_books[:3]  # ★同カテゴリの表紙は3冊まで（新しい順）
     thumbs = []
-    for b in sorted_books:
+    for b in display_books:
         cp = cover_url_or_none(b.get("slug"))
         asin = b.get("asin", "")
         title = b.get("title", "")
@@ -128,7 +129,15 @@ def _render_series_card(config, books, section_num):
             )
     thumb_count_class = f"thumbs-{min(len(thumbs), 3)}"
     thumbs_html = f'<div class="series-thumbs {thumb_count_class}">{"".join(thumbs)}</div>'
-    count_label = f'全{len(books)}冊' if config.get("lang") != "en" else f'{len(books)} {"books" if len(books) != 1 else "book"}'
+    total = len(books)
+    if config.get("lang") == "en":
+        count_label = f'{total} {"books" if total != 1 else "book"}'
+        if total > 3:
+            count_label += " (showing 3)"
+    else:
+        count_label = f'全{total}冊'
+        if total > 3:
+            count_label = f'全{total}冊（新着3冊を表示）'
 
     return f"""
       <article class="series-overview-card">
@@ -179,36 +188,38 @@ def review_url(asin, lang):
     return f"https://www.{domain}/review/create-review?asin={asin}"
 
 
-def render_review_cta(books):
-    """読者に正直なレビューをお願いするセクション。
+def render_review_cta(books, lang):
+    """読者に正直なレビューをお願いするセクション（言語別・当該言語の本のみ）。
     Amazon規約準拠：特典・星数の限定なし。肯定も率直な意見も歓迎する姿勢で「正直な感想」を求める。
     """
-    jp_items, en_items = [], []
+    items = []
     for b in sorted(books, key=lambda x: str(x.get("pub_date", "")), reverse=True):
         asin = b.get("asin", "")
         if not asin:
             continue
         sid = b.get("series_id")
-        lang = SERIES_CONFIG.get(sid, {}).get("lang", "jp")
+        blang = SERIES_CONFIG.get(sid, {}).get("lang", "jp")
+        if blang != lang:
+            continue
         short = b.get("title", "").split(":")[0].split("：")[0]
-        item = (f'<li><a href="{review_url(asin, lang)}" target="_blank" rel="noopener">'
-                f'{html.escape(short)}</a></li>')
-        (en_items if lang == "en" else jp_items).append(item)
+        items.append(f'<li><a href="{review_url(asin, lang)}" target="_blank" rel="noopener">'
+                     f'{html.escape(short)}</a></li>')
 
-    if not jp_items and not en_items:
+    if not items:
         return ""
 
-    blocks = []
-    if jp_items:
-        blocks.append(
-            '<div class="review-col"><h3 class="review-sub">日本語の著作</h3>'
-            f'<ul class="review-list">{"".join(jp_items)}</ul></div>'
-        )
-    if en_items:
-        blocks.append(
-            '<div class="review-col"><h3 class="review-sub">English titles</h3>'
-            f'<ul class="review-list">{"".join(en_items)}</ul></div>'
-        )
+    list_html = f'<div class="review-cols single"><div class="review-col"><ul class="review-list">{"".join(items)}</ul></div></div>'
+
+    if lang == "en":
+        return f"""
+<section class="review-cta">
+  <div class="wrap">
+    <div class="section-label">REVIEWS</div>
+    <h2 class="section-title">One small favor, if I may</h2>
+    <p class="review-lead">If any of these books helped you, a short and honest review on Amazon would mean a great deal. What worked for you — and what didn't — both help the next reader searching with the same question. The words you leave matter far more than the number of stars.</p>
+    {list_html}
+  </div>
+</section>"""
 
     return f"""
 <section class="review-cta">
@@ -216,7 +227,7 @@ def render_review_cta(books):
     <div class="section-label">REVIEWS</div>
     <h2 class="section-title">読んでくださった方へ、ひとつだけお願いです</h2>
     <p class="review-lead">どの本でも、お読みいただいた率直なご感想を Amazon にひとことだけ残していただけたら、とても励みになります。「ここが役に立った」も「ここはこう思う」も、どちらも歓迎です。あなたの一言が、これから同じ問いで本を探す次の誰かの道しるべになります。星の数よりも、感じたことそのものが何よりの参考になります。</p>
-    <div class="review-cols">{"".join(blocks)}</div>
+    {list_html}
   </div>
 </section>"""
 
@@ -235,10 +246,9 @@ REVIEW_CSS = """
 """
 
 
-def render_series_overview(series_groups):
-    """全シリーズ一覧（日本語・英語をセクションに分けて表示）"""
-    jp_cards = []
-    en_cards = []
+def render_series_overview(series_groups, lang):
+    """シリーズ一覧（当該言語のみ・1ページ1言語）"""
+    cards = []
     section_num = 1
     for sid, books in series_groups:
         if sid is None:
@@ -246,44 +256,32 @@ def render_series_overview(series_groups):
         config = SERIES_CONFIG.get(sid)
         if not config:
             continue
-        card_html = _render_series_card(config, books, section_num)
-        if config.get("lang") == "en":
-            en_cards.append(card_html)
-        else:
-            jp_cards.append(card_html)
+        if config.get("lang") != lang:
+            continue
+        cards.append(_render_series_card(config, books, section_num))
         section_num += 1
 
-    if not jp_cards and not en_cards:
+    if not cards:
         return ""
 
-    sections = []
-    if jp_cards:
-        sections.append(f"""
+    if lang == "en":
+        label, title, hint = ("ALL SERIES", "Book Series",
+                              "Click a cover to open its Amazon.com page.")
+    else:
+        label, title, hint = ("ALL SERIES", "シリーズ一覧",
+                              "表紙をクリックすると Amazon のページが開きます")
+
+    return f"""
 <section class="series-overview">
   <div class="wrap">
-    <div class="section-label">ALL SERIES</div>
-    <h2 class="section-title">シリーズ一覧</h2>
-    <p class="series-overview-hint">表紙をクリックすると Amazon のページが開きます</p>
+    <div class="section-label">{label}</div>
+    <h2 class="section-title">{title}</h2>
+    <p class="series-overview-hint">{hint}</p>
     <div class="series-overview-grid">
-      {''.join(jp_cards)}
+      {''.join(cards)}
     </div>
   </div>
-</section>""")
-
-    if en_cards:
-        sections.append(f"""
-<section class="series-overview">
-  <div class="wrap">
-    <div class="section-label">ENGLISH EDITIONS</div>
-    <h2 class="section-title">English Books</h2>
-    <p class="series-overview-hint">Click a cover to open the Amazon.com page.</p>
-    <div class="series-overview-grid">
-      {''.join(en_cards)}
-    </div>
-  </div>
-</section>""")
-
-    return "\n".join(sections)
+</section>"""
 
 
 CSS = """
@@ -528,83 +526,137 @@ h1, h2, h3 { font-family: 'Playfair Display', "Hiragino Mincho ProN", "Yu Mincho
 """
 
 
-def render_html(books):
-    """全体HTML"""
-    # シリーズ別グループ化
+EXTRA_CSS = """
+.lang-nav { display: flex; justify-content: center; gap: 20px; margin-bottom: 24px; font-family: 'Raleway', sans-serif; font-size: 13px; letter-spacing: 0.08em; }
+.lang-nav a { color: var(--accent); text-decoration: none; border-bottom: 1px solid transparent; padding-bottom: 2px; transition: border-color 0.2s; }
+.lang-nav a:hover { border-color: var(--accent); }
+.lang-nav .active { color: var(--ink); border-bottom: 1px solid var(--ink); padding-bottom: 2px; }
+.review-cta .review-cols.single { grid-template-columns: 1fr; max-width: 760px; }
+"""
+
+AUTHOR_JP = "https://www.amazon.co.jp/stores/%E8%B0%B7%E8%8B%B1%E5%85%B8/author/B0DC528BF8"
+AUTHOR_EN = "https://www.amazon.com/stores/%E8%B0%B7%E8%8B%B1%E5%85%B8/author/B0DC528BF8"
+
+
+def render_page(all_books, lang):
+    """1言語ぶんのページHTML（lang='jp' or 'en'）。当該言語のシリーズのみ表示。"""
+    # シリーズ別グループ化（standalone は series_id 無しで load 時に除外済み）
     by_series = {}
-    standalone = []
-    for b in books:
+    for b in all_books:
         sid = b.get("series_id")
         if sid is None:
-            standalone.append(b)
-        else:
-            by_series.setdefault(sid, []).append(b)
+            continue
+        by_series.setdefault(sid, []).append(b)
 
-    # 表示順ソート
     series_groups = []
     for sid in sorted(by_series.keys(), key=lambda s: SERIES_CONFIG.get(s, {"order": 999})["order"]):
         if sid in SERIES_CONFIG:
             series_groups.append((sid, by_series[sid]))
 
-    # standalone を末尾に
-    if standalone:
-        series_groups.append((None, standalone))
-
-    series_overview_html = render_series_overview(series_groups)
-    optin_html = render_optin()
-    review_cta_html = render_review_cta(books)
-    total = len(books)
+    series_overview_html = render_series_overview(series_groups, lang)
+    review_cta_html = render_review_cta(all_books, lang)
+    total = sum(1 for b in all_books
+                if SERIES_CONFIG.get(b.get("series_id"), {}).get("lang") == lang)
     generated = datetime.now().strftime("%Y-%m-%d %H:%M")
 
-    return f"""<!DOCTYPE html>
-<html lang="ja">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>著書 / Books — 谷英典</title>
-<meta name="description" content="谷英典（横浜薬科大学准教授）の著書一覧。lncRNA研究、AI時代の研究者の働き方、装置運用世代シリーズなど{total}冊。">
-<style>{CSS}
-{OPTIN_CSS}
-{REVIEW_CSS}</style>
-</head>
-<body>
-
+    if lang == "en":
+        html_lang = "en"
+        title = "Books — Hidenori Tani"
+        meta_desc = (f"Books by Hidenori Tani (Associate Professor, Yokohama University of "
+                     f"Pharmacy): lncRNA research, RNA therapeutics, and thriving as a "
+                     f"researcher in the age of AI. {total} English titles.")
+        lang_nav = ('<div class="lang-nav"><a href="index.html">日本語</a>'
+                    '<span class="active">English</span></div>')
+        hero = f"""
 <section class="hero">
   <div class="wrap">
+    {lang_nav}
+    <h1>Books</h1>
+    <div class="sub-en">HIDENORI TANI</div>
+    <p class="lead">
+      From life-science research (lncRNA and RNA therapeutics) to how researchers thrive in the age of AI —<br>
+      currently {total} English titles.
+    </p>
+    <div class="cta-row">
+      <a class="cta" href="{AUTHOR_EN}" target="_blank" rel="noopener">
+        View Amazon Author Page
+      </a>
+      <a class="cta outline" href="index.html">日本語の著書ページ</a>
+    </div>
+  </div>
+</section>"""
+        optin_html = ""  # 無料ガイドは日本語版のみ
+        footer = f"""
+<section class="footer-cta">
+  <div class="wrap">
+    <h2>See every title</h2>
+    <p>Browse all books, including paperback editions, on the Amazon author page.</p>
+    <div class="cta-row">
+      <a class="cta" href="{AUTHOR_EN}" target="_blank" rel="noopener">
+        amazon.com Author Page
+      </a>
+      <a class="cta outline" href="index.html">日本語の著書ページへ</a>
+    </div>
+  </div>
+</section>"""
+    else:
+        html_lang = "ja"
+        title = "著書 / Books — 谷英典"
+        meta_desc = (f"谷英典（横浜薬科大学准教授）の著書一覧。lncRNA研究、AI時代の研究者の"
+                     f"働き方、装置運用世代シリーズなど日本語{total}冊。英語版は別ページ。")
+        lang_nav = ('<div class="lang-nav"><span class="active">日本語</span>'
+                    '<a href="en.html">English</a></div>')
+        hero = f"""
+<section class="hero">
+  <div class="wrap">
+    {lang_nav}
     <h1>著書</h1>
     <div class="sub-en">BOOKS</div>
     <p class="lead">
       ライフサイエンス研究（lncRNA・RNA創薬）から、AI時代に研究者が生き残る技法まで——<br>
-      現在 {total} 冊を執筆しています。
+      現在 日本語 {total} 冊を執筆しています。
     </p>
     <div class="cta-row">
-      <a class="cta" href="https://www.amazon.co.jp/stores/%E8%B0%B7%E8%8B%B1%E5%85%B8/author/B0DC528BF8" target="_blank" rel="noopener">
+      <a class="cta" href="{AUTHOR_JP}" target="_blank" rel="noopener">
         Amazon著者ページを見る（日本語）
       </a>
-      <a class="cta outline" href="https://www.amazon.com/stores/%E8%B0%B7%E8%8B%B1%E5%85%B8/author/B0DC528BF8" target="_blank" rel="noopener">
-        View Amazon Author Page (English)
-      </a>
+      <a class="cta outline" href="en.html">English books</a>
     </div>
   </div>
-</section>
-{optin_html}
-{series_overview_html}
-{review_cta_html}
-
+</section>"""
+        optin_html = render_optin()
+        footer = f"""
 <section class="footer-cta">
   <div class="wrap">
     <h2>すべての著作を一覧で見る</h2>
     <p>Amazonの著者検索ページから、ペーパーバック版を含む全著作をご覧いただけます。</p>
     <div class="cta-row">
-      <a class="cta" href="https://www.amazon.co.jp/stores/%E8%B0%B7%E8%8B%B1%E5%85%B8/author/B0DC528BF8" target="_blank" rel="noopener">
+      <a class="cta" href="{AUTHOR_JP}" target="_blank" rel="noopener">
         日本語：amazon.co.jp 著者ページ
       </a>
-      <a class="cta outline" href="https://www.amazon.com/stores/%E8%B0%B7%E8%8B%B1%E5%85%B8/author/B0DC528BF8" target="_blank" rel="noopener">
-        English: amazon.com Author Page
-      </a>
+      <a class="cta outline" href="en.html">English books page</a>
     </div>
   </div>
-</section>
+</section>"""
+
+    return f"""<!DOCTYPE html>
+<html lang="{html_lang}">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{title}</title>
+<meta name="description" content="{meta_desc}">
+<style>{CSS}
+{OPTIN_CSS}
+{REVIEW_CSS}
+{EXTRA_CSS}</style>
+</head>
+<body>
+{hero}
+{optin_html}
+{series_overview_html}
+{review_cta_html}
+{footer}
 
 <div class="footer-meta">Last updated: {generated}</div>
 
@@ -618,11 +670,17 @@ def main():
     print(f"Loaded {len(books)} published books from {BOOKS_DIR}")
     copied = sync_covers(books)
     print(f"Synced {copied} cover image(s) to {COVERS_DIR}")
-    html_out = render_html(books)
-    OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
-    with open(OUTPUT_PATH, "w", encoding="utf-8") as f:
-        f.write(html_out)
-    print(f"Wrote {OUTPUT_PATH} ({len(html_out):,} bytes)")
+    docs_dir = OUTPUT_PATH.parent
+    docs_dir.mkdir(parents=True, exist_ok=True)
+    # ① 日本語（index.html）と英語（en.html）を別ページで出力
+    for lang, fname in (("jp", "index.html"), ("en", "en.html")):
+        html_out = render_page(books, lang)
+        out_path = docs_dir / fname
+        with open(out_path, "w", encoding="utf-8") as f:
+            f.write(html_out)
+        n = sum(1 for b in books
+                if SERIES_CONFIG.get(b.get("series_id"), {}).get("lang") == lang)
+        print(f"Wrote {out_path} ({len(html_out):,} bytes, {n} {lang} books)")
 
 
 if __name__ == "__main__":
