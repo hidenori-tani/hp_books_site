@@ -138,4 +138,23 @@ SERIES_CONFIG = {
         "concept": "How to hire AI as your research team and deliver results alone.",
         "lang": "en",
     },
+    # 2026-07-14 追加: 単独作をテーマ別シリーズへ（日英対称）
+    "brain-aging-jp": {
+        "order": 8.7,
+        "display_name": "脳・老化の科学シリーズ",
+        "concept": "老化時計から脳の加齢まで、分子生物学者が最新研究で読み解く「老い」の科学。",
+        "lang": "jp",
+    },
+    "ai-literacy-en": {
+        "order": 13.7,
+        "display_name": "AI Literacy Series",
+        "concept": "Thinking clearly in the age of AI — what stays essentially human when machines can answer anything.",
+        "lang": "en",
+    },
+    "brain-aging-en": {
+        "order": 14.5,
+        "display_name": "Brain & Aging Science",
+        "concept": "From epigenetic aging clocks to the aging brain — the molecular science of growing older, explained by a researcher.",
+        "lang": "en",
+    },
 }
