@@ -1,6 +1,6 @@
 # hp_books_site — hidenoritani.com 著書ページ自動生成
 
-`outreach-books/marketing/books/*.md` の書籍メタデータから、
+`book/marketing/books/*.md` の書籍メタデータから、
 hidenoritani.com の **著書ページ** を自動生成し、Wix の iframe で表示するパイプライン。
 
 **日本語（`index.html`）と英語（`en.html`）の2ページ**を出力し、各ページ上部の言語トグルで相互に行き来できる。
@@ -69,6 +69,22 @@ hp_books_site/
 
 ---
 
+## 2026-08-31 の更新（新刊8冊・シリーズ2件）
+
+先生ご提供の **KDP 本棚 PDF 2枚**（`homepage/Kindle/`）を一次データにして、
+**日本語 32→36冊・英語 32→36冊** に追いつかせた。前回の生成は 2026-07-14 で止まっていた。
+
+- 足した8冊＝ダークゲノムの読み方／生きづらさの設計図／研究者のためのClaude Code入門／
+  なぜあの曲だけが刺さるのか と、その英語版4冊。
+- **シリーズ**：`brain-aging-jp/en` を「脳・老化の科学」→**「脳と心の科学」/ Brain & Mind Science** に改名（音楽と脳の1冊が入ったため）。
+  **`society-jp/en`「社会と生きづらさの科学」/ Society & the Science of Belonging を新設**（どちらも先生のご判断）。
+- 🚨 **表紙6枚は Amazon の公開画像（313×500）**。他は 1600×2560 だが、原寸の元画像が
+  手元にも外付けHDDにも残っていなかった（`covers/` は 2026-08-24 に生成中間ファイルを退避済み、
+  新刊分はそもそも commit されていない）。表示は1枚あたり約110px なので実害はない。
+  出どころは各 `books/<slug>.md` の `notes` に書いてある。
+- 🚨 **筆名（黒沢亜美 / Ami Kurosawa）の8冊は載せない**（ルート `CLAUDE.md` §4）。
+  本棚 PDF には入っているが、`books/*.md` にも作らない。
+
 ## 日常運用
 
 新刊出版・レビュー更新があったとき：
@@ -97,7 +113,7 @@ GitHub にログインして新規リポジトリを作成：
 ### Step 2: ローカルリポジトリと接続
 
 ```bash
-cd /Users/tanihidenori/claude-work/outreach-books/hp_books_site
+cd /Users/tanihidenori/claude-work/book/hp_books_site
 git branch -M main
 git remote add origin git@github.com:<YOUR_GITHUB_USER>/hp_books_site.git
 git push -u origin main
@@ -205,6 +221,6 @@ PAPERBACK_MAP = {
 
 ## 関連
 
-- `outreach-books/marketing/` — 書籍メタデータの真実源（独立 git repo）
-- `outreach-books/marketing/CLAUDE.md` — Kindle マーケティング自動化サブプロジェクトAの全体仕様
+- `book/marketing/` — 書籍メタデータの真実源（独立 git repo）
+- `book/marketing/CLAUDE.md` — Kindle マーケティング自動化サブプロジェクトAの全体仕様
 - `/kindle-fetch`, `/kindle-optimize` — メタデータ更新・最適化用既存スキル

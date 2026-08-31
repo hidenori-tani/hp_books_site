@@ -139,10 +139,11 @@ SERIES_CONFIG = {
         "lang": "en",
     },
     # 2026-07-14 追加: 単独作をテーマ別シリーズへ（日英対称）
+    # 2026-08-31 改名（先生のご判断）: 音楽と脳の1冊が入り、「老い」限定では収まらなくなった
     "brain-aging-jp": {
         "order": 8.7,
-        "display_name": "脳・老化の科学シリーズ",
-        "concept": "老化時計から脳の加齢まで、分子生物学者が最新研究で読み解く「老い」の科学。",
+        "display_name": "脳と心の科学シリーズ",
+        "concept": "老化時計から音楽が刺さる仕組みまで、分子生物学者が最新研究で読み解く脳と心。",
         "lang": "jp",
     },
     "ai-literacy-en": {
@@ -151,10 +152,24 @@ SERIES_CONFIG = {
         "concept": "Thinking clearly in the age of AI — what stays essentially human when machines can answer anything.",
         "lang": "en",
     },
+    # 2026-08-31 改名（先生のご判断）: 上の brain-aging-jp と対
     "brain-aging-en": {
         "order": 14.5,
-        "display_name": "Brain & Aging Science",
-        "concept": "From epigenetic aging clocks to the aging brain — the molecular science of growing older, explained by a researcher.",
+        "display_name": "Brain & Mind Science",
+        "concept": "From epigenetic aging clocks to why one song gets under your skin — the molecular science of the brain and mind.",
+        "lang": "en",
+    },
+    # 2026-08-31 新設（先生のご判断）: 文化と社会を科学で読む棚。日英で対にする
+    "society-jp": {
+        "order": 8.8,
+        "display_name": "社会と生きづらさの科学",
+        "concept": "息苦しさは個人の欠陥ではなく、社会の設計から生まれる。文化人類学と心理学のデータで、日本の生きづらさを解剖する。",
+        "lang": "jp",
+    },
+    "society-en": {
+        "order": 14.6,
+        "display_name": "Society & the Science of Belonging",
+        "concept": "Why a culture can feel suffocating — the anthropology and psychology behind everyday pressure in Japan, and what the evidence actually says.",
         "lang": "en",
     },
 }
