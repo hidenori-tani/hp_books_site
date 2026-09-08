@@ -159,6 +159,20 @@ SERIES_CONFIG = {
         "concept": "From epigenetic aging clocks to why one song gets under your skin — the molecular science of the brain and mind.",
         "lang": "en",
     },
+    # 2026-09-08 新設: 麻雀を題材に「答え合わせの来ない場所」での判断を描いた単著
+    "judgment-and-luck-jp": {
+        "order": 8.9,
+        "display_name": "運と判断のシリーズ",
+        "concept": "結果が返ってきても、答え合わせは返ってこない。そういう場所で「型」を作り、守り続けるための一冊。",
+        "lang": "jp",
+    },
+    # 2026-09-08 新設: 「借りたものを作り替える」日本的な工夫の思想を描いた単著
+    "makaizo-craft-jp": {
+        "order": 8.95,
+        "display_name": "工夫と作り替えのシリーズ",
+        "concept": "与えられたものを、意のままに作り替える。日本の現場に息づく「魔改造」の思想を解剖する。",
+        "lang": "jp",
+    },
     # 2026-08-31 新設（先生のご判断）: 文化と社会を科学で読む棚。日英で対にする
     "society-jp": {
         "order": 8.8,
@@ -170,6 +184,20 @@ SERIES_CONFIG = {
         "order": 14.6,
         "display_name": "Society & the Science of Belonging",
         "concept": "Why a culture can feel suffocating — the anthropology and psychology behind everyday pressure in Japan, and what the evidence actually says.",
+        "lang": "en",
+    },
+
+    "judgment-and-luck-en": {
+        "order": 15.5,
+        "display_name": "Judgment & Luck",
+        "concept": "Results come back. The answer key never does. A method for building — and keeping — your own way of deciding in places without feedback.",
+        "lang": "en",
+    },
+    # 2026-09-08 新設: 「借りたものを作り替える」日本的な工夫の思想を描いた単著（日本語版と対）
+    "makaizo-craft-en": {
+        "order": 15.7,
+        "display_name": "The Art of Rebuilding",
+        "concept": "The Japanese mindset for reshaping what you're given — makaizo, the craft of remaking what you didn't invent.",
         "lang": "en",
     },
 }
